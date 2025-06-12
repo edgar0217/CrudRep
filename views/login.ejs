@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 flex items-center justify-center h-screen">
+    <form
+      method="POST"
+      action="/login"
+      class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-96"
+    >
+      <h2 class="mb-4 text-xl font-bold text-center">Iniciar sesión</h2>
+      <% if (error) { %>
+      <p class="bg-red-100 text-red-700 p-2 mb-4 rounded"><%= error %></p>
+      <% } %>
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2"
+          >Usuario</label
+        >
+        <input
+          name="username"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+          required
+        />
+      </div>
+      <div class="mb-6">
+        <label class="block text-gray-700 text-sm font-bold mb-2"
+          >Contraseña</label
+        >
+        <input
+          name="password"
+          type="password"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+          required
+        />
+      </div>
+      <button
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full"
+        type="submit"
+      >
+        Entrar
+      </button>
+    </form>
+  </body>
+</html>
