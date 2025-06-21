@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Inventario Vehículos 2025</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 min-h-screen flex flex-col items-center">
+    <div
+      class="w-full max-w-7xl mx-auto mt-10 p-6 bg-white rounded-3xl shadow-2xl border border-blue-100"
+    >
+      <div
+        class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6"
+      >
+        <div>
+          <h1
+            class="text-2xl md:text-3xl font-bold text-blue-700 flex items-center gap-2"
+          >
+            <svg
+              class="w-7 h-7 text-blue-700"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9.75 17.25L6 21m0 0l-3.75-3.75M6 21V9m12 12l3.75-3.75M18 21V9m0 0l-6-6m0 0l-6 6"
+              ></path>
+            </svg>
+            Inventario Vehículos 2025
+          </h1>
+          <p class="text-gray-500 mt-1">Gestiona tu inventario actualizado.</p>
+        </div>
+        <button
+          onclick="openModal()"
+          class="bg-blue-700 hover:bg-blue-800 text-white font-semibold px-6 py-2 rounded-2xl shadow flex items-center gap-2"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          Agregar Vehículo
+        </button>
+      </div>
+
+      <!-- Búsqueda -->
+      <div class="mb-4">
+        <input
+          id="searchInput"
+          oninput="renderTable()"
+          type="text"
+          placeholder="Buscar..."
+          class="w-full md:w-1/3 border px-4 py-2 rounded-xl shadow-sm focus:ring-blue-500"
+        />
+      </div>
+
+      <div class="overflow-x-auto rounded-xl border border-blue-100">
+        <table class="min-w-full text-xs md:text-sm text-gray-800 bg-white">
+          <thead>
+            <tr class="bg-blue-100 text-blue-800 font-bold text-center">
+              <th class="py-2 px-3">N°</th>
+              <th class="py-2 px-3">Equipo</th>
+              <th class="py-2 px-3">Denominación</th>
+              <th class="py-2 px-3">Fabricante</th>
+              <th class="py-2 px-3">Año</th>
+              <th class="py-2 px-3">Matrícula</th>
+              <th class="py-2 px-3">VIN</th>
+              <th class="py-2 px-3">Motor</th>
+              <th class="py-2 px-3">Departamento</th>
+              <th class="py-2 px-3">Área</th>
+              <th class="py-2 px-3">Clasificación</th>
+              <th class="py-2 px-3">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <!-- Dinámico -->
+          </tbody>
+        </table>
+      </div>
+      <div id="emptyState" class="text-center text-gray-400 mt-8 hidden">
+        <span class="text-6xl">📋</span><br />
+        <span class="block mt-2">No hay vehículos registrados.</span>
+      </div>
+    </div>
+
+    <!-- Modal Responsive Mejorado -->
+    <div
+      id="modal-bg"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-all duration-200 hidden"
+    >
+      <div
+        class="relative w-full max-w-lg mx-2 my-6 md:my-0 bg-white rounded-2xl shadow-2xl flex flex-col animate-fade-in"
+        style="max-height: 95vh"
+      >
+        <!-- Barra superior con botón de cerrar -->
+        <div class="flex justify-between items-center px-6 py-4 border-b">
+          <h2
+            id="modalTitle"
+            class="text-xl md:text-2xl font-bold text-blue-700"
+          >
+            Nuevo Vehículo
+          </h2>
+          <button
+            onclick="closeModal()"
+            class="text-gray-400 hover:text-red-500 text-2xl font-bold transition-colors ml-4 focus:outline-none"
+            aria-label="Cerrar"
+          >
+            &times;
+          </button>
+        </div>
+        <!-- Contenido scrollable -->
+        <form
+          id="vehiculoForm"
+          class="px-6 py-4 overflow-y-auto flex-1 space-y-5"
+          style="max-height: 80vh"
+          onsubmit="guardarVehiculo(event)"
+        >
+          <input type="hidden" id="input_index" />
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label class="font-semibold text-gray-700"
+              >Equipo:
+              <input
+                type="text"
+                id="input_equipo"
+                class="border mt-1 rounded-xl px-3 py-1 w-full focus:ring-blue-500"
+                required
+              />
+            </label>
+            <label class="font-semibold text-gray-700"
+              >Denominación:
+              <input
+                type="text"
+                id="input_denominacion"
+                class="border mt-1 rounded-xl px-3 py-1 w-full focus:ring-blue-500"
+                required
+              />
+            </label>
+            <label class="font-semibold text-gray-700"
+              >Fabricante:
+              <input
+                type="text"
+                id="input_fabricante"
+                class="border mt-1 rounded-xl px-3 py-1 w-full focus:ring-blue-500"
+                required
+              />
+            </label>
+            <label class="font-semibold text-gray-700"
+              >Año:
+              <input
+                type="text"
+                id="input_ano"
+                class="border mt-1 rounded-xl px-3 py-1 w-full focus:ring-blue-500"
+                required
+              />
+            </label>
+            <label class="font-semibold text-gray-700"
+              >Matrícula:
+              <input
+                type="text"
+                id="input_matricula"
+                class="border mt-1 rounded-xl px-3 py-1 w-full focus:ring-blue-500"
+                required
+              />
+            </label>
+            <label class="font-semibold text-gray-700"
+              >VIN:
+              <input
+                type="text"
+                id="input_vin"
+                class="border mt-1 rounded-xl px-3 py-1 w-full focus:ring-blue-500"
+                required
+              />
+            </label>
+            <label class="font-semibold text-gray-700"
+              >Motor:
+              <input
+                type="text"
+                id="input_motor"
+                class="border mt-1 rounded-xl px-3 py-1 w-full focus:ring-blue-500"
+                required
+              />
+            </label>
+            <label class="font-semibold text-gray-700"
+              >Departamento:
+              <input
+                type="text"
+                id="input_departamento"
+                class="border mt-1 rounded-xl px-3 py-1 w-full focus:ring-blue-500"
+                required
+              />
+            </label>
+            <label class="font-semibold text-gray-700"
+              >Área:
+              <input
+                type="text"
+                id="input_area"
+                class="border mt-1 rounded-xl px-3 py-1 w-full focus:ring-blue-500"
+                required
+              />
+            </label>
+            <label class="font-semibold text-gray-700 col-span-1 md:col-span-2"
+              >Campo de clasificación:
+              <input
+                type="text"
+                id="input_clasificacion"
+                class="border mt-1 rounded-xl px-3 py-1 w-full focus:ring-blue-500"
+                required
+              />
+            </label>
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 rounded-xl mt-4 transition"
+          >
+            Guardar
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <style>
+      @media (max-width: 768px) {
+        #modal-bg > div {
+          border-radius: 0.75rem !important;
+          margin: 0 !important;
+          width: 98vw !important;
+          min-height: 97vh;
+          max-height: 97vh !important;
+        }
+        #vehiculoForm {
+          max-height: 67vh !important;
+          overflow-y: auto;
+        }
+      }
+      .animate-fade-in {
+        animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+
+    <script>
+      // Datos demo de ejemplo
+      let vehiculos = [
+        {
+          equipo: "23000199",
+          denominacion: "RENAULT/LOGAN/2024/BLANCO",
+          fabricante: "RENAULT",
+          ano: "2024",
+          matricula: "MEY094A",
+          vin: "9FB4S80FRM6110137",
+          motor: "Q205147",
+          departamento: "COMERCIAL",
+          area: "POZA RICA",
+          clasificacion: "D3174",
+        },
+      ];
+
+      function renderTable() {
+        const search = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        let datos = vehiculos.filter((v) =>
+          Object.values(v).some((val) =>
+            String(val).toLowerCase().includes(search)
+          )
+        );
+        let body = document.getElementById("tableBody");
+        body.innerHTML = "";
+        if (datos.length === 0) {
+          document.getElementById("emptyState").classList.remove("hidden");
+        } else {
+          document.getElementById("emptyState").classList.add("hidden");
+          datos.forEach((v, idx) => {
+            let idxOriginal = vehiculos.findIndex((orig) => orig === v);
+            body.innerHTML += `
+            <tr class="border-b hover:bg-blue-50 transition text-center">
+              <td class="py-2 px-3">${idx + 1}</td>
+              <td class="py-2 px-3">${v.equipo}</td>
+              <td class="py-2 px-3">${v.denominacion}</td>
+              <td class="py-2 px-3">${v.fabricante}</td>
+              <td class="py-2 px-3">${v.ano}</td>
+              <td class="py-2 px-3">${v.matricula}</td>
+              <td class="py-2 px-3">${v.vin}</td>
+              <td class="py-2 px-3">${v.motor}</td>
+              <td class="py-2 px-3">${v.departamento}</td>
+              <td class="py-2 px-3">${v.area}</td>
+              <td class="py-2 px-3">${v.clasificacion}</td>
+              <td class="py-2 px-3 flex gap-2 justify-center">
+                <button onclick="editarVehiculo(${idxOriginal})" class="bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-3 py-1 text-xs font-semibold shadow flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 8.5-8.5z"/></svg>
+                  Editar
+                </button>
+                <button onclick="borrarVehiculo(${idxOriginal})" class="bg-red-600 hover:bg-red-700 text-white rounded-xl px-3 py-1 text-xs font-semibold shadow flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m5 0H4"/></svg>
+                  Borrar
+                </button>
+              </td>
+            </tr>
+          `;
+          });
+        }
+      }
+
+      function openModal(editar = false) {
+        document.getElementById("vehiculoForm").reset();
+        document.getElementById("modalTitle").textContent = editar
+          ? "Editar Vehículo"
+          : "Nuevo Vehículo";
+        document.getElementById("input_index").value = "";
+        document.getElementById("modal-bg").classList.remove("hidden");
+      }
+      function closeModal() {
+        document.getElementById("modal-bg").classList.add("hidden");
+      }
+
+      function guardarVehiculo(e) {
+        e.preventDefault();
+        const i = document.getElementById("input_index").value;
+        const data = {
+          equipo: document.getElementById("input_equipo").value.trim(),
+          denominacion: document
+            .getElementById("input_denominacion")
+            .value.trim(),
+          fabricante: document.getElementById("input_fabricante").value.trim(),
+          ano: document.getElementById("input_ano").value.trim(),
+          matricula: document.getElementById("input_matricula").value.trim(),
+          vin: document.getElementById("input_vin").value.trim(),
+          motor: document.getElementById("input_motor").value.trim(),
+          departamento: document
+            .getElementById("input_departamento")
+            .value.trim(),
+          area: document.getElementById("input_area").value.trim(),
+          clasificacion: document
+            .getElementById("input_clasificacion")
+            .value.trim(),
+        };
+        if (i !== "") vehiculos[i] = data;
+        else vehiculos.push(data);
+        closeModal();
+        renderTable();
+      }
+
+      function editarVehiculo(idx) {
+        const v = vehiculos[idx];
+        document.getElementById("input_index").value = idx;
+        document.getElementById("input_equipo").value = v.equipo;
+        document.getElementById("input_denominacion").value = v.denominacion;
+        document.getElementById("input_fabricante").value = v.fabricante;
+        document.getElementById("input_ano").value = v.ano;
+        document.getElementById("input_matricula").value = v.matricula;
+        document.getElementById("input_vin").value = v.vin;
+        document.getElementById("input_motor").value = v.motor;
+        document.getElementById("input_departamento").value = v.departamento;
+        document.getElementById("input_area").value = v.area;
+        document.getElementById("input_clasificacion").value = v.clasificacion;
+        document.getElementById("modalTitle").textContent = "Editar Vehículo";
+        document.getElementById("modal-bg").classList.remove("hidden");
+      }
+
+      function borrarVehiculo(idx) {
+        if (confirm("¿Eliminar este registro?")) {
+          vehiculos.splice(idx, 1);
+          renderTable();
+        }
+      }
+
+      // Cerrar modal con ESC o clic fuera
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeModal();
+      });
+      document.addEventListener("click", function (event) {
+        let modalBg = document.getElementById("modal-bg");
+        if (!modalBg.classList.contains("hidden") && event.target === modalBg)
+          closeModal();
+      });
+
+      // Render inicial
+      renderTable();
+    </script>
+  </body>
+</html>
