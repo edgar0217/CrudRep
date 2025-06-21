@@ -31,10 +31,12 @@ app.use(
 import { router as authRoutes } from "./routes/auth.routes.js";
 import { router as adminRoutes } from "./routes/admin.routes.js";
 import { router as indisponibilidadRoutes } from "./routes/indisponibilidad.routes.js";
+import { router as inventarioVehiculoRoutes } from "./routes/inventarioVehiculo.routes.js";
 
 app.use("/", authRoutes);
 app.use("/admin", adminRoutes);
 app.use("/admin/indisponibilidad", indisponibilidadRoutes);
+app.use("/admin", inventarioVehiculoRoutes);
 
 // Database sync
 db.sync().then(() => {

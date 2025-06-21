@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Inventario Vehículos 2025</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 min-h-screen flex flex-col items-center">
+    <div class="w-full max-w-7xl mx-auto mt-10 p-6 bg-white rounded-3xl shadow-2xl border border-blue-100">
+      <!-- Botón regresar -->
+      <div class="mb-4">
+        <a href="/admin/dashboard" class="inline-flex items-center gap-2 bg-gray-200 hover:bg-blue-100 text-blue-800 font-semibold px-4 py-2 rounded-xl shadow transition">
+          <span class="text-lg">←</span>
+          <span>Regresar al menú</span>
+        </a>
+      </div>
+      <!-- Encabezado -->
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        <div>
+          <h1 class="text-2xl md:text-3xl font-bold text-blue-700 flex items-center gap-2">
+            <svg class="w-7 h-7 text-blue-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17.25L6 21m0 0l-3.75-3.75M6 21V9m12 12l3.75-3.75M18 21V9m0 0l-6-6m0 0l-6 6"/>
+            </svg>
+            Inventario Vehículos 2025
+          </h1>
+          <p class="text-gray-500 mt-1">Gestiona tu inventario actualizado.</p>
+        </div>
+        <button onclick="openModalCrear()" class="bg-blue-700 hover:bg-blue-800 text-white font-semibold px-6 py-2 rounded-2xl shadow flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+          </svg>
+          Agregar Vehículo
+        </button>
+      </div>
+      <!-- Filtros y búsqueda -->
+      <div class="flex flex-col md:flex-row gap-4 mb-4">
+        <form class="flex flex-col md:flex-row gap-4 flex-1" method="GET" action="/admin/inventario-vehiculos">
+          <input
+            name="q"
+            value="<%= q %>"
+            type="text"
+            placeholder="Buscar..."
+            class="w-full md:w-1/3 border px-4 py-2 rounded-xl shadow-sm focus:ring-blue-500"
+          />
+          <select name="order" class="border px-4 py-2 rounded-xl w-full md:w-auto">
+            <option value="equipo_asc" <%= order === "equipo_asc" ? "selected" : "" %>>Equipo A-Z</option>
+            <option value="equipo_desc" <%= order === "equipo_desc" ? "selected" : "" %>>Equipo Z-A</option>
+            <option value="ano_asc" <%= order === "ano_asc" ? "selected" : "" %>>Año ascendente</option>
+            <option value="ano_desc" <%= order === "ano_desc" ? "selected" : "" %>>Año descendente</option>
+            <option value="departamento_az" <%= order === "departamento_az" ? "selected" : "" %>>Departamento A-Z</option>
+            <option value="departamento_za" <%= order === "departamento_za" ? "selected" : "" %>>Departamento Z-A</option>
+          </select>
+          <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-xl shadow transition-all w-full md:w-auto">
+            Buscar
+          </button>
+        </form>
+        <!-- Botón limpiar filtros -->
+        <form method="GET" action="/admin/inventario-vehiculos">
+          <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-4 py-2 rounded-xl shadow transition-all w-full md:w-auto">
+            Limpiar filtros
+          </button>
+        </form>
+      </div>
+      <!-- Tabla principal -->
+      <div class="overflow-x-auto rounded-xl border border-blue-100">
+        <table class="min-w-full text-xs md:text-sm text-gray-800 bg-white">
+          <thead>
+            <tr class="bg-blue-100 text-blue-800 font-bold text-center">
+              <th class="py-2 px-3">N°</th>
+              <th class="py-2 px-3">Equipo</th>
+              <th class="py-2 px-3">Denominación</th>
+              <th class="py-2 px-3">Fabricante</th>
+              <th class="py-2 px-3">Año</th>
+              <th class="py-2 px-3">Matrícula</th>
+              <th class="py-2 px-3">VIN</th>
+              <th class="py-2 px-3">Motor</th>
+              <th class="py-2 px-3">Departamento</th>
+              <th class="py-2 px-3">Área</th>
+              <th class="py-2 px-3">Clasificación</th>
+              <th class="py-2 px-3">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (vehiculos.length === 0) { %>
+              <tr>
+                <td colspan="12" class="p-8 text-center text-gray-400">
+                  <span class="text-6xl">📋</span><br />
+                  <span class="block mt-2">No hay vehículos registrados.</span>
+                </td>
+              </tr>
+            <% } %>
+            <% vehiculos.forEach((v, idx) => { %>
+              <tr class="border-b hover:bg-blue-50 transition text-center">
+                <td class="py-2 px-3"><%= idx + 1 %></td>
+                <td class="py-2 px-3"><%= v.equipo %></td>
+                <td class="py-2 px-3"><%= v.denominacion %></td>
+                <td class="py-2 px-3"><%= v.fabricante %></td>
+                <td class="py-2 px-3"><%= v.ano %></td>
+                <td class="py-2 px-3"><%= v.matricula %></td>
+                <td class="py-2 px-3"><%= v.vin %></td>
+                <td class="py-2 px-3"><%= v.motor %></td>
+                <td class="py-2 px-3"><%= v.departamento %></td>
+                <td class="py-2 px-3"><%= v.area %></td>
+                <td class="py-2 px-3"><%= v.clasificacion %></td>
+                <td class="py-2 px-3 flex gap-2 justify-center">
+                  <button type="button" onclick='openModalEditar(<%- JSON.stringify(v) %>)' class="bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-3 py-1 text-xs font-semibold shadow flex items-center gap-1">
+                    ✏️ Editar
+                  </button>
+                  <form action="/admin/inventario-vehiculos/<%= v.id %>/delete" method="POST" class="inline" onsubmit="return confirm('¿Seguro que quieres eliminar este vehículo?')">
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white rounded-xl px-3 py-1 text-xs font-semibold shadow flex items-center gap-1">
+                      🗑️ Borrar
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MODAL CREAR/EDITAR -->
+    <div id="modal-bg" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-all duration-200 hidden">
+      <div class="relative w-full max-w-lg mx-2 my-6 md:my-0 bg-white rounded-2xl shadow-2xl flex flex-col animate-fade-in" style="max-height: 95vh">
+        <!-- Barra superior con botón de cerrar -->
+        <div class="flex justify-between items-center px-6 py-4 border-b">
+          <h2 id="modalTitle" class="text-xl md:text-2xl font-bold text-blue-700">Nuevo Vehículo</h2>
+          <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 text-2xl font-bold transition-colors ml-4 focus:outline-none" aria-label="Cerrar">&times;</button>
+        </div>
+        <form id="vehiculoForm" class="px-6 py-4 overflow-y-auto flex-1 space-y-5" style="max-height: 80vh" method="POST" action="/admin/inventario-vehiculos">
+          <input type="hidden" name="id" id="input_id" />
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label class="font-semibold text-gray-700">Equipo:
+              <input type="text" name="equipo" id="input_equipo" class="border mt-1 rounded-xl px-3 py-1 w-full focus:ring-blue-500" required />
+            </label>
+            <label class="font-semibold text-gray-700">Denominación:
+              <input type="text" name="denominacion" id="input_denominacion" class="border mt-1 rounded-xl px-3 py-1 w-full focus:ring-blue-500" required />
+            </label>
+            <label class="font-semibold text-gray-700">Fabricante:
+              <input type="text" name="fabricante" id="input_fabricante" class="border mt-1 rounded-xl px-3 py-1 w-full focus:ring-blue-500" required />
+            </label>
+            <label class="font-semibold text-gray-700">Año:
+              <input type="text" name="ano" id="input_ano" class="border mt-1 rounded-xl px-3 py-1 w-full focus:ring-blue-500" required />
+            </label>
+            <label class="font-semibold text-gray-700">Matrícula:
+              <input type="text" name="matricula" id="input_matricula" class="border mt-1 rounded-xl px-3 py-1 w-full focus:ring-blue-500" required />
+            </label>
+            <label class="font-semibold text-gray-700">VIN:
+              <input type="text" name="vin" id="input_vin" class="border mt-1 rounded-xl px-3 py-1 w-full focus:ring-blue-500" required />
+            </label>
+            <label class="font-semibold text-gray-700">Motor:
+              <input type="text" name="motor" id="input_motor" class="border mt-1 rounded-xl px-3 py-1 w-full focus:ring-blue-500" required />
+            </label>
+            <label class="font-semibold text-gray-700">Departamento:
+              <input type="text" name="departamento" id="input_departamento" class="border mt-1 rounded-xl px-3 py-1 w-full focus:ring-blue-500" required />
+            </label>
+            <label class="font-semibold text-gray-700">Área:
+              <input type="text" name="area" id="input_area" class="border mt-1 rounded-xl px-3 py-1 w-full focus:ring-blue-500" required />
+            </label>
+            <label class="font-semibold text-gray-700 col-span-1 md:col-span-2">Clasificación:
+              <input type="text" name="clasificacion" id="input_clasificacion" class="border mt-1 rounded-xl px-3 py-1 w-full focus:ring-blue-500" required />
+            </label>
+          </div>
+          <div class="flex gap-3 mt-4">
+            <button type="submit" class="flex-1 bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 rounded-xl transition">
+              Guardar
+            </button>
+            <button type="button" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 rounded-xl transition border border-gray-400"
+              onclick="limpiarFormulario()">
+              Limpiar formulario
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script>
+      // Modal crear/editar
+      function openModalCrear() {
+        document.getElementById('vehiculoForm').action = "/admin/inventario-vehiculos";
+        document.getElementById('modalTitle').textContent = "Nuevo Vehículo";
+        limpiarFormulario();
+        document.getElementById('modal-bg').classList.remove('hidden');
+      }
+      function openModalEditar(data) {
+        document.getElementById('vehiculoForm').action = "/admin/inventario-vehiculos/" + data.id + "/edit";
+        document.getElementById('modalTitle').textContent = "Editar Vehículo";
+        document.getElementById('input_id').value = data.id || "";
+        document.getElementById('input_equipo').value = data.equipo || "";
+        document.getElementById('input_denominacion').value = data.denominacion || "";
+        document.getElementById('input_fabricante').value = data.fabricante || "";
+        document.getElementById('input_ano').value = data.ano || "";
+        document.getElementById('input_matricula').value = data.matricula || "";
+        document.getElementById('input_vin').value = data.vin || "";
+        document.getElementById('input_motor').value = data.motor || "";
+        document.getElementById('input_departamento').value = data.departamento || "";
+        document.getElementById('input_area').value = data.area || "";
+        document.getElementById('input_clasificacion').value = data.clasificacion || "";
+        document.getElementById('modal-bg').classList.remove('hidden');
+      }
+      function closeModal() {
+        document.getElementById('modal-bg').classList.add('hidden');
+      }
+      function limpiarFormulario() {
+        document.getElementById('input_id').value = "";
+        document.getElementById('input_equipo').value = "";
+        document.getElementById('input_denominacion').value = "";
+        document.getElementById('input_fabricante').value = "";
+        document.getElementById('input_ano').value = "";
+        document.getElementById('input_matricula').value = "";
+        document.getElementById('input_vin').value = "";
+        document.getElementById('input_motor').value = "";
+        document.getElementById('input_departamento').value = "";
+        document.getElementById('input_area').value = "";
+        document.getElementById('input_clasificacion').value = "";
+      }
+      // Cerrar modal con ESC o clic fuera
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeModal();
+      });
+      document.addEventListener("click", function (event) {
+        let modalBg = document.getElementById("modal-bg");
+        if (!modalBg.classList.contains("hidden") && event.target === modalBg)
+          closeModal();
+      });
+    </script>
+  </body>
+</html>
