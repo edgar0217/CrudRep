@@ -2,36 +2,45 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Menú Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body class="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100">
-    <div class="container mx-auto p-8">
-      <div class="flex justify-between items-center mb-10">
-        <h1 class="text-3xl font-bold text-blue-800 tracking-tight drop-shadow">
+    <div class="container mx-auto px-4 py-6 md:py-8">
+      <div
+        class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4"
+      >
+        <h1
+          class="text-xl sm:text-2xl md:text-3xl font-bold text-blue-800 tracking-tight drop-shadow text-center sm:text-left"
+        >
           Panel de Opciones (Admin)
         </h1>
         <a
           href="/logout"
-          class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl font-semibold shadow transition-all flex items-center gap-1"
+          class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl font-semibold shadow transition-all flex items-center gap-1 text-sm sm:text-base"
         >
           <span>Salir</span> <span class="text-xl">⏻</span>
         </a>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+      >
         <!-- Reparaciones -->
         <a
           href="/admin/reparaciones"
-          class="bg-white hover:bg-blue-50 shadow-xl rounded-2xl flex flex-col items-center p-6 group transition border-2 border-transparent hover:border-blue-300"
+          class="bg-white hover:bg-blue-50 shadow-xl rounded-2xl flex flex-col items-center p-4 sm:p-5 group transition border hover:border-blue-300"
         >
-          <span class="text-5xl mb-3 text-blue-400 group-hover:text-blue-600"
+          <span
+            class="text-4xl sm:text-5xl mb-2 text-blue-400 group-hover:text-blue-600"
             >🛠️</span
           >
           <span
-            class="text-lg font-semibold text-blue-700 group-hover:underline"
+            class="text-base sm:text-lg font-semibold text-blue-700 group-hover:underline"
             >Reparaciones</span
           >
-          <span class="text-xs text-gray-500 mt-2 text-center"
+          <span class="text-xs text-gray-500 mt-1 text-center"
             >Gestión de reparaciones</span
           >
         </a>
@@ -39,16 +48,17 @@
         <!-- Indisponibilidad -->
         <a
           href="/admin/indisponibilidad"
-          class="bg-white hover:bg-green-50 shadow-xl rounded-2xl flex flex-col items-center p-6 group transition border-2 border-transparent hover:border-green-300"
+          class="bg-white hover:bg-green-50 shadow-xl rounded-2xl flex flex-col items-center p-4 sm:p-5 group transition border hover:border-green-300"
         >
-          <span class="text-5xl mb-3 text-green-400 group-hover:text-green-600"
+          <span
+            class="text-4xl sm:text-5xl mb-2 text-green-400 group-hover:text-green-600"
             >🚗</span
           >
           <span
-            class="text-lg font-semibold text-green-700 group-hover:underline"
+            class="text-base sm:text-lg font-semibold text-green-700 group-hover:underline"
             >Indisponibilidad</span
           >
-          <span class="text-xs text-gray-500 mt-2 text-center"
+          <span class="text-xs text-gray-500 mt-1 text-center"
             >Unidades fuera de servicio</span
           >
         </a>
@@ -56,87 +66,96 @@
         <!-- Inventario Vehículos -->
         <a
           href="/admin/inventario-vehiculos"
-          class="bg-white hover:bg-blue-50 shadow-xl rounded-2xl flex flex-col items-center p-6 group transition border-2 border-transparent hover:border-blue-300"
+          class="bg-white hover:bg-blue-50 shadow-xl rounded-2xl flex flex-col items-center p-4 sm:p-5 group transition border hover:border-blue-300"
         >
-          <span class="text-5xl mb-3 text-blue-400 group-hover:text-blue-600"
+          <span
+            class="text-4xl sm:text-5xl mb-2 text-blue-400 group-hover:text-blue-600"
             >🚗</span
           >
           <span
-            class="text-lg font-semibold text-blue-700 group-hover:underline"
+            class="text-base sm:text-lg font-semibold text-blue-700 group-hover:underline"
+            >Inventario Vehículos</span
           >
-            Inventario Vehículos
-          </span>
-          <span class="text-xs text-gray-500 mt-2 text-center">
-            Ver y editar inventario de vehículos
-          </span>
-        </a>
-
-        <!-- Menú genérico 3 -->
-        <a
-          href="#"
-          class="bg-white hover:bg-blue-50 shadow-xl rounded-2xl flex flex-col items-center p-6 group transition border-2 border-transparent hover:border-blue-300"
-        >
-          <span class="text-5xl mb-3 text-pink-400 group-hover:text-pink-600"
-            >👤</span
-          >
-          <span
-            class="text-lg font-semibold text-pink-700 group-hover:underline"
-            >Menú</span
+          <span class="text-xs text-gray-500 mt-1 text-center"
+            >Ver y editar inventario de vehículos</span
           >
         </a>
 
-        <!-- Menú genérico 4 -->
+        <!-- Bajas Vehiculos -->
         <a
-          href="#"
-          class="bg-white hover:bg-blue-50 shadow-xl rounded-2xl flex flex-col items-center p-6 group transition border-2 border-transparent hover:border-blue-300"
+          href="/admin/bajas"
+          class="bg-white hover:bg-blue-50 shadow-xl rounded-2xl flex flex-col items-center p-4 sm:p-5 group transition border hover:border-pink-300"
         >
           <span
-            class="text-5xl mb-3 text-indigo-400 group-hover:text-indigo-600"
+            class="text-4xl sm:text-5xl mb-2 text-pink-400 group-hover:text-pink-600"
+            >🚗</span
+          >
+          <span
+            class="text-base sm:text-lg font-semibold text-pink-700 group-hover:underline"
+            >Bajas Vehículos</span
+          >
+          <span class="text-xs text-gray-500 mt-1 text-center"
+            >Ver y editar baja de vehículos</span
+          >
+        </a>
+
+        <!-- Factibilidad -->
+        <a
+          href="/admin/factibilidad"
+          class="bg-white hover:bg-blue-50 shadow-xl rounded-2xl flex flex-col items-center p-4 sm:p-5 group transition border hover:border-indigo-300"
+        >
+          <span
+            class="text-4xl sm:text-5xl mb-2 text-indigo-400 group-hover:text-indigo-600"
             >📊</span
           >
           <span
-            class="text-lg font-semibold text-indigo-700 group-hover:underline"
-            >Menú</span
+            class="text-base sm:text-lg font-semibold text-indigo-700 group-hover:underline"
+            >Factibilidad</span
+          >
+          <span class="text-xs text-gray-500 mt-1 text-center"
+            >Gestión de factibilidad</span
           >
         </a>
 
-        <!-- Menú genérico 5 -->
+        <!-- Genéricos -->
         <a
           href="#"
-          class="bg-white hover:bg-blue-50 shadow-xl rounded-2xl flex flex-col items-center p-6 group transition border-2 border-transparent hover:border-blue-300"
+          class="bg-white hover:bg-blue-50 shadow-xl rounded-2xl flex flex-col items-center p-4 sm:p-5 group transition border hover:border-cyan-300"
         >
-          <span class="text-5xl mb-3 text-cyan-400 group-hover:text-cyan-600"
+          <span
+            class="text-4xl sm:text-5xl mb-2 text-cyan-400 group-hover:text-cyan-600"
             >👨‍🔧</span
           >
           <span
-            class="text-lg font-semibold text-cyan-700 group-hover:underline"
+            class="text-base sm:text-lg font-semibold text-cyan-700 group-hover:underline"
             >Menú</span
           >
         </a>
 
-        <!-- Menú genérico 6 -->
         <a
           href="#"
-          class="bg-white hover:bg-blue-50 shadow-xl rounded-2xl flex flex-col items-center p-6 group transition border-2 border-transparent hover:border-blue-300"
+          class="bg-white hover:bg-blue-50 shadow-xl rounded-2xl flex flex-col items-center p-4 sm:p-5 group transition border hover:border-lime-300"
         >
-          <span class="text-5xl mb-3 text-lime-400 group-hover:text-lime-600"
+          <span
+            class="text-4xl sm:text-5xl mb-2 text-lime-400 group-hover:text-lime-600"
             >📝</span
           >
           <span
-            class="text-lg font-semibold text-lime-700 group-hover:underline"
+            class="text-base sm:text-lg font-semibold text-lime-700 group-hover:underline"
             >Menú</span
           >
         </a>
 
-        <!-- Menú genérico 7 -->
         <a
           href="#"
-          class="bg-white hover:bg-blue-50 shadow-xl rounded-2xl flex flex-col items-center p-6 group transition border-2 border-transparent hover:border-blue-300"
+          class="bg-white hover:bg-blue-50 shadow-xl rounded-2xl flex flex-col items-center p-4 sm:p-5 group transition border hover:border-red-300"
         >
-          <span class="text-5xl mb-3 text-red-400 group-hover:text-red-600"
+          <span
+            class="text-4xl sm:text-5xl mb-2 text-red-400 group-hover:text-red-600"
             >⚙️</span
           >
-          <span class="text-lg font-semibold text-red-700 group-hover:underline"
+          <span
+            class="text-base sm:text-lg font-semibold text-red-700 group-hover:underline"
             >Menú</span
           >
         </a>

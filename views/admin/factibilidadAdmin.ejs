@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Factibilidad</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 pb-12">
+    <div class="container mx-auto p-4">
+      <div class="mb-6">
+        <a
+          href="/admin/dashboard"
+          class="inline-flex items-center gap-2 bg-gray-200 hover:bg-blue-200 text-blue-800 font-semibold px-4 py-2 rounded-xl shadow transition"
+        >
+          <span class="text-lg">←</span> Regresar al menú
+        </a>
+      </div>
+
+      <div
+        class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4"
+      >
+        <h1
+          class="text-3xl font-extrabold text-blue-900 drop-shadow tracking-tight flex items-center gap-2"
+        >
+          <span>📄</span> Factibilidad
+          <span class="text-xs font-semibold text-gray-500">(Admin)</span>
+        </h1>
+      </div>
+
+      <!-- Filtros y botones -->
+      <div class="bg-white/80 rounded-2xl shadow-lg p-4 mb-8 flex flex-col md:flex-row justify-between gap-2">
+        <div class="flex flex-col md:flex-row gap-4 mb-4 w-full">
+          <form class="flex flex-col md:flex-row gap-4 flex-1" method="GET" action="/admin/factibilidad">
+            <input name="q" value="<%= q || '' %>" type="text" placeholder="Buscar por orden..."
+              class="w-full md:w-1/3 border px-4 py-2 rounded-xl shadow-sm focus:ring-blue-500" />
+            <select name="order" class="border px-4 py-2 rounded-xl w-full md:w-auto">
+              <option value="orden_asc" <%=order==="orden_asc" ? "selected" : "" %>>Orden A-Z</option>
+              <option value="orden_desc" <%=order==="orden_desc" ? "selected" : "" %>>Orden Z-A</option>
+              <option value="presupuesto_asc" <%=order==="presupuesto_asc" ? "selected" : "" %>>Presupuesto ↑</option>
+              <option value="presupuesto_desc" <%=order==="presupuesto_desc" ? "selected" : "" %>>Presupuesto ↓</option>
+            </select>
+            <button type="submit"
+              class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-xl shadow transition-all w-full md:w-auto">
+              Buscar
+            </button>
+          </form>
+
+          <form method="GET" action="/admin/factibilidad">
+            <button type="submit"
+              class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-4 py-2 rounded-xl shadow transition-all w-full md:w-auto">
+              Limpiar filtros
+            </button>
+          </form>
+
+          <button
+            id="btnShowModalCrear"
+            class="bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-lg shadow transition-all"
+          >
+            ➕ Nueva factibilidad
+          </button>
+        </div>
+      </div>
+
+      <div
+        class="overflow-x-auto mb-8 rounded-xl shadow border border-gray-200 bg-white/90"
+      >
+        <table class="min-w-full text-sm">
+          <thead>
+            <tr class="bg-blue-100 text-blue-900">
+              <th class="px-3 py-2 font-bold">Orden</th>
+              <th class="px-3 py-2 font-bold">Presupuesto</th>
+              <th class="px-3 py-2 font-bold">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (factibilidades.length === 0) { %>
+            <tr>
+              <td colspan="3" class="p-4 text-center text-gray-400">
+                No hay registros
+              </td>
+            </tr>
+            <% } %> 
+            <% factibilidades.forEach(f => { %>
+            <tr class="hover:bg-blue-50 border-t transition">
+              <td class="px-3 py-2"><%= f.orden %></td>
+              <td class="px-3 py-2">$<%= f.presupuesto %></td>
+              <td class="px-3 py-2 flex gap-2">
+                <button
+                  type="button"
+                  class="bg-yellow-400 hover:bg-yellow-500 text-white rounded px-3 py-1"
+                  onclick="showEditarModal(<%= f.id %>, '<%= f.orden %>', <%= f.presupuesto %>)"
+                >
+                  ✏️
+                </button>
+
+                <form
+                  action="/admin/factibilidad/<%= f.id %>/delete"
+                  method="POST"
+                  onsubmit="return confirm('¿Eliminar este registro?')"
+                >
+                  <button
+                    type="submit"
+                    class="bg-red-500 hover:bg-red-600 text-white rounded px-3 py-1"
+                  >
+                    🗑️
+                  </button>
+                </form>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Modal Crear -->
+    <div
+      id="modalCrear"
+      class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center hidden"
+    >
+      <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md relative">
+        <button
+          id="btnHideModalCrear"
+          type="button"
+          class="absolute right-4 top-4 text-gray-400 hover:text-red-500 text-2xl font-bold transition"
+        >
+          ×
+        </button>
+        <h2 class="text-xl font-bold text-blue-700 mb-4">
+          ➕ Nueva factibilidad
+        </h2>
+        <form method="POST" action="/admin/factibilidad" class="space-y-4">
+          <input
+            name="orden"
+            placeholder="Orden"
+            required
+            class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+          />
+          <input
+            name="presupuesto"
+            type="number"
+            step="0.01"
+            placeholder="Presupuesto"
+            required
+            class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+          />
+          <button
+            type="submit"
+            class="bg-green-500 hover:bg-green-600 text-white py-2 px-6 rounded-lg font-bold shadow transition"
+          >
+            Guardar
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal Editar -->
+    <div
+      id="modalEditar"
+      class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center hidden"
+    >
+      <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md relative">
+        <button
+          id="btnHideModalEditar"
+          type="button"
+          class="absolute right-4 top-4 text-gray-400 hover:text-red-500 text-2xl font-bold transition"
+        >
+          ×
+        </button>
+        <h2 class="text-xl font-bold text-blue-700 mb-4">
+          ✏️ Editar factibilidad
+        </h2>
+        <form method="POST" id="formEditar" class="space-y-4">
+          <input
+            name="orden"
+            id="editarOrden"
+            placeholder="Orden"
+            required
+            class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+          />
+          <input
+            name="presupuesto"
+            id="editarPresupuesto"
+            type="number"
+            step="0.01"
+            placeholder="Presupuesto"
+            required
+            class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+          />
+          <button
+            type="submit"
+            class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-6 rounded-lg font-bold shadow transition"
+          >
+            Actualizar
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const btnShowModalCrear = document.getElementById("btnShowModalCrear");
+      const btnHideModalCrear = document.getElementById("btnHideModalCrear");
+      const modalCrear = document.getElementById("modalCrear");
+      btnShowModalCrear.onclick = () => modalCrear.classList.remove("hidden");
+      btnHideModalCrear.onclick = () => modalCrear.classList.add("hidden");
+      modalCrear.onclick = (e) => {
+        if (e.target === modalCrear) modalCrear.classList.add("hidden");
+      };
+
+      const modalEditar = document.getElementById("modalEditar");
+      const btnHideModalEditar = document.getElementById("btnHideModalEditar");
+      const formEditar = document.getElementById("formEditar");
+      const editarOrden = document.getElementById("editarOrden");
+      const editarPresupuesto = document.getElementById("editarPresupuesto");
+
+      btnHideModalEditar.onclick = () => modalEditar.classList.add("hidden");
+      modalEditar.onclick = (e) => {
+        if (e.target === modalEditar) modalEditar.classList.add("hidden");
+      };
+
+      function showEditarModal(id, orden, presupuesto) {
+        editarOrden.value = orden;
+        editarPresupuesto.value = presupuesto;
+        formEditar.action = `/admin/factibilidad/${id}/edit`;
+        modalEditar.classList.remove("hidden");
+      }
+    </script>
+  </body>
+</html>

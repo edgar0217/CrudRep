@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Bajas Vehículos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 pb-12">
+  <div class="container mx-auto p-4">
+    <div class="mb-6">
+      <a href="/admin/dashboard"
+        class="inline-flex items-center gap-2 bg-gray-200 hover:bg-blue-200 text-blue-800 font-semibold px-4 py-2 rounded-xl shadow transition">
+        <span class="text-lg">←</span> Regresar al menú
+      </a>
+    </div>
+
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+      <h1 class="text-3xl font-extrabold text-blue-900 drop-shadow tracking-tight flex items-center gap-2">
+        <span>🚗</span> Vehículos de baja 2024–2025
+        <span class="text-xs font-semibold text-gray-500">(Admin)</span>
+      </h1>
+    </div>
+
+    <div class="bg-white/80 rounded-2xl shadow-lg p-4 mb-8 flex flex-col md:flex-row justify-between gap-2">
+      <div class="flex flex-col md:flex-row gap-4 mb-4">
+        <form class="flex flex-col md:flex-row gap-4 flex-1" method="GET" action="/admin/bajas">
+          <input name="q" value="<%= q %>" type="text" placeholder="Buscar (Económico, Marca, Placas, Modelo)..."
+            class="w-full md:w-1/3 border px-4 py-2 rounded-xl shadow-sm focus:ring-blue-500" />
+          <select name="order" class="border px-4 py-2 rounded-xl w-full md:w-auto">
+            <option value="economico_asc" <%=order==="economico_asc" ? "selected" : "" %>>Económico A-Z</option>
+            <option value="economico_desc" <%=order==="economico_desc" ? "selected" : "" %>>Económico Z-A</option>
+            <option value="anio_asc" <%=order==="anio_asc" ? "selected" : "" %>>Año de baja ascendente</option>
+            <option value="anio_desc" <%=order==="anio_desc" ? "selected" : "" %>>Año de baja descendente</option>
+            <option value="marca_az" <%=order==="marca_az" ? "selected" : "" %>>Marca A-Z</option>
+            <option value="marca_za" <%=order==="marca_za" ? "selected" : "" %>>Marca Z-A</option>
+          </select>
+          <button type="submit"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-xl shadow transition-all w-full md:w-auto">
+            Buscar
+          </button>
+        </form>
+
+        <form method="GET" action="/admin/bajas">
+          <button type="submit"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-4 py-2 rounded-xl shadow transition-all w-full md:w-auto">
+            Limpiar filtros
+          </button>
+        </form>
+      </div>
+
+      <button id="btnShowModalCrear"
+        class="bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-lg shadow transition-all">
+        ➕ Nuevo vehículo de baja
+      </button>
+    </div>
+
+    <div class="overflow-x-auto mb-8 rounded-xl shadow border border-gray-200 bg-white/90">
+      <table class="min-w-full text-xs md:text-sm">
+        <thead>
+          <tr class="bg-blue-100 text-blue-900">
+            <th class="px-3 py-2 font-bold">Económico</th>
+            <th class="px-3 py-2 font-bold">Marca</th>
+            <th class="px-3 py-2 font-bold">Placas</th>
+            <th class="px-3 py-2 font-bold">Modelo</th>
+            <th class="px-3 py-2 font-bold">Año de baja</th>
+            <th class="px-3 py-2 font-bold">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (bajas.length===0) { %>
+            <tr>
+              <td colspan="6" class="p-4 text-center text-gray-400">
+                No hay registros
+              </td>
+            </tr>
+            <% } %>
+              <% bajas.forEach(v=> { %>
+                <tr class="hover:bg-blue-50 border-t transition">
+                  <td class="px-3 py-2">
+                    <%= v.economico %>
+                  </td>
+                  <td class="px-3 py-2">
+                    <%= v.marca %>
+                  </td>
+                  <td class="px-3 py-2">
+                    <%= v.placas %>
+                  </td>
+                  <td class="px-3 py-2">
+                    <%= v.modelo %>
+                  </td>
+                  <td class="px-3 py-2">
+                    <%= v.anio_baja %>
+                  </td>
+                  <td class="px-3 py-2 flex gap-1">
+                    <button type="button" class="bg-yellow-400 hover:bg-yellow-500 text-white rounded px-2 py-1"
+                      onclick="showEditModal(<%= v.id %>)">
+                      ✏️
+                    </button>
+                    <form action="/admin/bajas/<%= v.id %>/delete" method="POST"
+                      onsubmit="return confirm('¿Eliminar este vehículo?')">
+                      <button type="submit" class="bg-red-500 hover:bg-red-600 text-white rounded px-2 py-1">
+                        🗑️
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal crear -->
+  <div id="modalCrear" class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center hidden">
+    <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md relative">
+      <button id="btnHideModalCrear" type="button"
+        class="absolute right-4 top-4 text-gray-400 hover:text-red-500 text-2xl font-bold transition">
+        ×
+      </button>
+      <h2 class="text-xl font-bold text-blue-700 mb-4">
+        ➕ Nuevo vehículo de baja
+      </h2>
+      <form method="POST" action="/admin/bajas" class="space-y-4">
+        <input name="economico" placeholder="Económico" required class="border border-gray-300 p-2 rounded-lg w-full" />
+        <input name="marca" placeholder="Marca" required class="border border-gray-300 p-2 rounded-lg w-full" />
+        <input name="placas" placeholder="Placas" required class="border border-gray-300 p-2 rounded-lg w-full" />
+        <input name="modelo" placeholder="Modelo" required class="border border-gray-300 p-2 rounded-lg w-full" />
+        <input name="anio_baja" type="number" placeholder="Año de baja" required
+          class="border border-gray-300 p-2 rounded-lg w-full" />
+        <button type="submit"
+          class="bg-green-500 hover:bg-green-600 text-white py-2 px-6 rounded-lg font-bold shadow transition">
+          Guardar
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal editar -->
+  <div id="modalEditar" class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center hidden">
+    <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md relative">
+      <button id="btnHideModalEditar" type="button"
+        class="absolute right-4 top-4 text-gray-400 hover:text-red-500 text-2xl font-bold transition">
+        ×
+      </button>
+      <h2 class="text-xl font-bold text-blue-700 mb-4">
+        ✏️ Editar vehículo de baja
+      </h2>
+      <form id="editForm" method="POST" class="space-y-4">
+        <input name="economico" id="edit_economico" required class="border border-gray-300 p-2 rounded-lg w-full" />
+        <input name="marca" id="edit_marca" required class="border border-gray-300 p-2 rounded-lg w-full" />
+        <input name="placas" id="edit_placas" required class="border border-gray-300 p-2 rounded-lg w-full" />
+        <input name="modelo" id="edit_modelo" required class="border border-gray-300 p-2 rounded-lg w-full" />
+        <input name="anio_baja" type="number" id="edit_anio_baja" required
+          class="border border-gray-300 p-2 rounded-lg w-full" />
+        <button type="submit"
+          class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-6 rounded-lg font-bold shadow transition">
+          Guardar cambios
+        </button>
+      </form>
+    </div>
+  </div>
+
+<script>
+  const bajas = <%- JSON.stringify(bajas) %>;
+
+  const btnShowModalCrear = document.getElementById("btnShowModalCrear");
+  const btnHideModalCrear = document.getElementById("btnHideModalCrear");
+  const modalCrear = document.getElementById("modalCrear");
+
+  btnShowModalCrear.onclick = () => modalCrear.classList.remove("hidden");
+  btnHideModalCrear.onclick = () => modalCrear.classList.add("hidden");
+  modalCrear.onclick = e => {
+    if (e.target === modalCrear) modalCrear.classList.add("hidden");
+  };
+
+  const modalEditar = document.getElementById("modalEditar");
+  const btnHideModalEditar = document.getElementById("btnHideModalEditar");
+  btnHideModalEditar.onclick = () => modalEditar.classList.add("hidden");
+  modalEditar.onclick = e => {
+    if (e.target === modalEditar) modalEditar.classList.add("hidden");
+  };
+
+  window.showEditModal = function(id) {
+    const v = bajas.find(b => b.id === id);
+    if (!v) return;
+    document.getElementById("edit_economico").value = v.economico;
+    document.getElementById("edit_marca").value = v.marca;
+    document.getElementById("edit_placas").value = v.placas;
+    document.getElementById("edit_modelo").value = v.modelo;
+    document.getElementById("edit_anio_baja").value = v.anio_baja;
+    const form = document.getElementById("editForm");
+    form.action = `/admin/bajas/${v.id}/edit`;
+    modalEditar.classList.remove("hidden");
+  }
+</script>
+
+</body>
+
+</html>
