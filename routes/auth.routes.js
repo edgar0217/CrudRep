@@ -13,10 +13,10 @@ router.get("/", (req, res) => {
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ where: { username } });
-  if (!user) return res.render("login", { error: "Usuario no existe" });
+  if (!user) return res.render("login", { error: "Credenciales Incorrectas" });
 
   const match = await bcrypt.compare(password, user.password);
-  if (!match) return res.render("login", { error: "Contraseña incorrecta" });
+  if (!match) return res.render("login", { error: "Credenciales Incorrectas" });
 
   req.session.userId = user.id;
   req.session.role = user.role;

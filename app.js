@@ -3,9 +3,6 @@ import session from "express-session";
 import path from "path";
 import { fileURLToPath } from "url";
 import db from "./config/database.js";
-import User from "./models/user.js";
-import Reparacion from "./models/Reparacion.js";
-import bcrypt from "bcrypt";
 
 // __dirname workaround for ESModules
 const __filename = fileURLToPath(import.meta.url);
