@@ -2,8 +2,42 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Factibilidad</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Estilos específicos para móviles */
+      @media (max-width: 767px) {
+        .table-header-group {
+          display: none;
+        }
+        .mobile-card {
+          display: block;
+          border: 1px solid #e2e8f0;
+          border-radius: 0.75rem;
+          margin-bottom: 1rem;
+          padding: 1rem;
+          background: white;
+        }
+        .mobile-card-row {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 0.5rem;
+        }
+        .mobile-card-label {
+          font-weight: 600;
+          color: #4a5568;
+          margin-right: 0.5rem;
+          min-width: 100px;
+        }
+        .mobile-card-actions {
+          display: flex;
+          justify-content: flex-end;
+          gap: 0.5rem;
+          margin-top: 1rem;
+        }
+      }
+    </style>
   </head>
   <body class="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 pb-12">
     <div class="container mx-auto p-4">
@@ -20,7 +54,7 @@
         class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4"
       >
         <h1
-          class="text-3xl font-extrabold text-blue-900 drop-shadow tracking-tight flex items-center gap-2"
+          class="text-2xl md:text-3xl font-extrabold text-blue-900 drop-shadow tracking-tight flex items-center gap-2"
         >
           <span>📄</span> Factibilidad
           <span class="text-xs font-semibold text-gray-500">(Admin)</span>
@@ -56,7 +90,7 @@
             id="btnShowModalCrear"
             class="bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-lg shadow transition-all w-full sm:w-auto"
           >
-            ➕ Nueva factibilidad
+            ➕ <span class="hidden sm:inline">Nueva</span> factibilidad
           </button>
         </div>
       </div>
@@ -64,7 +98,8 @@
       <div
         class="overflow-x-auto mb-8 rounded-xl shadow border border-gray-200 bg-white/90"
       >
-        <table class="min-w-full text-sm sm:text-base">
+        <!-- Vista de escritorio (tabla) -->
+        <table class="min-w-full text-sm sm:text-base hidden md:table">
           <thead>
             <tr class="bg-blue-100 text-blue-900">
               <th class="px-3 py-2 font-bold">Orden</th>
@@ -110,6 +145,48 @@
             <% }) %>
           </tbody>
         </table>
+        
+        <!-- Vista móvil (tarjetas) -->
+        <div class="md:hidden p-2">
+          <% if (factibilidades.length === 0) { %>
+            <div class="p-4 text-center text-gray-400">
+              No hay registros
+            </div>
+          <% } %>
+          <% factibilidades.forEach(f => { %>
+            <div class="mobile-card">
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">Orden:</span>
+                <span><%= f.orden %></span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">Presupuesto:</span>
+                <span>$<%= f.presupuesto %></span>
+              </div>
+              <div class="mobile-card-actions">
+                <button
+                  type="button"
+                  class="bg-yellow-400 hover:bg-yellow-500 text-white rounded px-3 py-1"
+                  onclick="showEditarModal(<%= f.id %>, '<%= f.orden %>', <%= f.presupuesto %>)"
+                >
+                  ✏️ Editar
+                </button>
+                <form
+                  action="/admin/factibilidad/<%= f.id %>/delete"
+                  method="POST"
+                  onsubmit="return confirm('¿Eliminar este registro?')"
+                >
+                  <button
+                    type="submit"
+                    class="bg-red-500 hover:bg-red-600 text-white rounded px-3 py-1"
+                  >
+                    🗑️ Eliminar
+                  </button>
+                </form>
+              </div>
+            </div>
+          <% }) %>
+        </div>
       </div>
     </div>
 
@@ -118,7 +195,7 @@
       id="modalCrear"
       class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center hidden"
     >
-      <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md relative">
+      <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-md mx-4 relative">
         <button
           id="btnHideModalCrear"
           type="button"
@@ -159,7 +236,7 @@
       id="modalEditar"
       class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center hidden"
     >
-      <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md relative">
+      <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-md mx-4 relative">
         <button
           id="btnHideModalEditar"
           type="button"

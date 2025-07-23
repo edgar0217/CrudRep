@@ -5,32 +5,65 @@
     <title>Inventario Vehículos 2025</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Estilos específicos para móviles */
+      @media (max-width: 767px) {
+        .table-header-group {
+          display: none;
+        }
+        .mobile-card {
+          display: block;
+          border: 1px solid #e2e8f0;
+          border-radius: 0.75rem;
+          margin-bottom: 1rem;
+          padding: 1rem;
+          background: white;
+        }
+        .mobile-card-row {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 0.5rem;
+        }
+        .mobile-card-label {
+          font-weight: 600;
+          color: #4a5568;
+          margin-right: 0.5rem;
+          min-width: 100px;
+        }
+        .mobile-card-actions {
+          display: flex;
+          justify-content: flex-end;
+          gap: 0.5rem;
+          margin-top: 1rem;
+        }
+      }
+    </style>
   </head>
   <body class="bg-gray-100 min-h-screen flex flex-col items-center">
-    <div class="w-full max-w-7xl mx-auto mt-10 p-6 bg-white rounded-3xl shadow-2xl border border-blue-100">
+    <div class="w-full max-w-7xl mx-auto mt-4 md:mt-10 p-4 md:p-6 bg-white rounded-3xl shadow-2xl border border-blue-100">
       <!-- Botón regresar -->
       <div class="mb-4">
         <a href="/admin/dashboard" class="inline-flex items-center gap-2 bg-gray-200 hover:bg-blue-100 text-blue-800 font-semibold px-4 py-2 rounded-xl shadow transition">
           <span class="text-lg">←</span>
-          <span>Regresar al menú</span>
+          <span class="hidden sm:inline">Regresar al menú</span>
         </a>
       </div>
       <!-- Encabezado -->
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <div>
           <h1 class="text-2xl md:text-3xl font-bold text-blue-700 flex items-center gap-2">
-            <svg class="w-7 h-7 text-blue-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="w-6 h-6 md:w-7 md:h-7 text-blue-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17.25L6 21m0 0l-3.75-3.75M6 21V9m12 12l3.75-3.75M18 21V9m0 0l-6-6m0 0l-6 6"/>
             </svg>
-            Inventario Vehículos 2025
+            Inventario 2025
           </h1>
-          <p class="text-gray-500 mt-1">Gestiona tu inventario actualizado.</p>
+          <p class="text-gray-500 mt-1 text-sm md:text-base">Gestiona tu inventario actualizado.</p>
         </div>
-        <button onclick="openModalCrear()" class="bg-blue-700 hover:bg-blue-800 text-white font-semibold px-6 py-2 rounded-2xl shadow flex items-center gap-2">
+        <button onclick="openModalCrear()" class="bg-blue-700 hover:bg-blue-800 text-white font-semibold px-4 md:px-6 py-2 rounded-2xl shadow flex items-center gap-2">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
           </svg>
-          Agregar Vehículo
+          <span class="hidden sm:inline">Agregar</span> Vehículo
         </button>
       </div>
       <!-- Filtros y búsqueda -->
@@ -41,7 +74,7 @@
             value="<%= q %>"
             type="text"
             placeholder="Buscar..."
-            class="w-full md:w-1/3 border px-4 py-2 rounded-xl shadow-sm focus:ring-blue-500"
+            class="w-full border px-4 py-2 rounded-xl shadow-sm focus:ring-blue-500"
           />
           <select name="order" class="border px-4 py-2 rounded-xl w-full md:w-auto">
             <option value="equipo_asc" <%= order === "equipo_asc" ? "selected" : "" %>>Equipo A-Z</option>
@@ -58,13 +91,14 @@
         <!-- Botón limpiar filtros -->
         <form method="GET" action="/admin/inventario-vehiculos">
           <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-4 py-2 rounded-xl shadow transition-all w-full md:w-auto">
-            Limpiar filtros
+            Limpiar
           </button>
         </form>
       </div>
       <!-- Tabla principal -->
       <div class="overflow-x-auto rounded-xl border border-blue-100">
-        <table class="min-w-full text-xs md:text-sm text-gray-800 bg-white">
+        <!-- Vista de escritorio (tabla) -->
+        <table class="min-w-full text-xs md:text-sm text-gray-800 bg-white hidden md:table">
           <thead>
             <tr class="bg-blue-100 text-blue-800 font-bold text-center">
               <th class="py-2 px-3">N°</th>
@@ -117,6 +151,54 @@
             <% }) %>
           </tbody>
         </table>
+        
+        <!-- Vista móvil (tarjetas) -->
+        <div class="md:hidden p-2">
+          <% if (vehiculos.length === 0) { %>
+            <div class="p-8 text-center text-gray-400">
+              <span class="text-6xl">📋</span><br />
+              <span class="block mt-2">No hay vehículos registrados.</span>
+            </div>
+          <% } %>
+          <% vehiculos.forEach((v, idx) => { %>
+            <div class="mobile-card">
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">N°:</span>
+                <span><%= idx + 1 %></span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">Equipo:</span>
+                <span><%= v.equipo %></span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">Denominación:</span>
+                <span><%= v.denominacion %></span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">Fabricante:</span>
+                <span><%= v.fabricante %></span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">Año:</span>
+                <span><%= v.ano %></span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">Matrícula:</span>
+                <span><%= v.matricula %></span>
+              </div>
+              <div class="mobile-card-actions">
+                <button type="button" onclick='openModalEditar(<%- JSON.stringify(v) %>)' class="bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-3 py-1 text-xs font-semibold shadow flex items-center gap-1">
+                  ✏️ Editar
+                </button>
+                <form action="/admin/inventario-vehiculos/<%= v.id %>/delete" method="POST" class="inline" onsubmit="return confirm('¿Seguro que quieres eliminar este vehículo?')">
+                  <button type="submit" class="bg-red-600 hover:bg-red-700 text-white rounded-xl px-3 py-1 text-xs font-semibold shadow flex items-center gap-1">
+                    🗑️ Borrar
+                  </button>
+                </form>
+              </div>
+            </div>
+          <% }) %>
+        </div>
       </div>
     </div>
 
@@ -128,7 +210,7 @@
           <h2 id="modalTitle" class="text-xl md:text-2xl font-bold text-blue-700">Nuevo Vehículo</h2>
           <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 text-2xl font-bold transition-colors ml-4 focus:outline-none" aria-label="Cerrar">&times;</button>
         </div>
-        <form id="vehiculoForm" class="px-6 py-4 overflow-y-auto flex-1 space-y-5" style="max-height: 80vh" method="POST" action="/admin/inventario-vehiculos">
+        <form id="vehiculoForm" class="px-4 md:px-6 py-4 overflow-y-auto flex-1 space-y-5" style="max-height: 80vh" method="POST" action="/admin/inventario-vehiculos">
           <input type="hidden" name="id" id="input_id" />
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <label class="font-semibold text-gray-700">Equipo:
@@ -168,7 +250,7 @@
             </button>
             <button type="button" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 rounded-xl transition border border-gray-400"
               onclick="limpiarFormulario()">
-              Limpiar formulario
+              Limpiar
             </button>
           </div>
         </form>

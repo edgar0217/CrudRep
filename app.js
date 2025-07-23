@@ -31,6 +31,7 @@ import { router as indisponibilidadRoutes } from "./routes/indisponibilidad.rout
 import { router as inventarioVehiculoRoutes } from "./routes/inventarioVehiculo.routes.js";
 import { router as factibilidadRoutes } from "./routes/factibilidad.routes.js";
 import { router as bajasRoutes } from "./routes/bajas.routes.js";
+import { router as siniestrosRoutes } from "./routes/siniestros.routes.js";
 
 app.use("/", authRoutes);
 app.use("/admin", adminRoutes);
@@ -38,6 +39,7 @@ app.use("/admin/indisponibilidad", indisponibilidadRoutes);
 app.use("/admin", inventarioVehiculoRoutes);
 app.use("/admin/factibilidad", factibilidadRoutes);
 app.use("/admin/bajas", bajasRoutes);
+app.use("/admin/siniestros", siniestrosRoutes);
 
 // Database sync
 db.sync().then(() => {

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Estilos específicos para móviles */
+    @media (max-width: 767px) {
+      .table-header-group {
+        display: none;
+      }
+      .mobile-card {
+        display: block;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: white;
+      }
+      .mobile-card-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+      }
+      .mobile-card-label {
+        font-weight: 600;
+        color: #4a5568;
+        margin-right: 0.5rem;
+        min-width: 100px;
+      }
+      .mobile-card-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+    }
+  </style>
+  <title>Gestión de Siniestros</title>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="max-w-6xl mx-auto px-4 py-4 md:py-8">
+    <h2 class="text-2xl md:text-3xl font-bold mb-4 md:mb-6 text-center">Gestión de Siniestros</h2>
+
+    <!-- Filtros -->
+    <div class="bg-white/80 rounded-2xl shadow-lg p-4 mb-6">
+      <form class="flex flex-col md:flex-row md:items-center gap-2 w-full" method="GET" action="/admin/siniestros">
+        <input name="q" value="<%= q || '' %>" type="text" placeholder="Buscar por económico o póliza..."
+          class="w-full border px-4 py-2 rounded-xl shadow-sm focus:ring-blue-500" />
+        <select name="order" class="border px-4 py-2 rounded-xl w-full md:w-auto">
+          <option value="">Ordenar por…</option>
+          <option value="fecha_asc" <%= order==="fecha_asc" ? "selected" : "" %>>Fecha ↑</option>
+          <option value="fecha_desc" <%= order==="fecha_desc" ? "selected" : "" %>>Fecha ↓</option>
+          <option value="importe_asc" <%= order==="importe_asc" ? "selected" : "" %>>Importe ↑</option>
+          <option value="importe_desc" <%= order==="importe_desc" ? "selected" : "" %>>Importe ↓</option>
+        </select>
+        <button type="submit"
+          class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-xl shadow transition-all w-full md:w-auto">
+          Buscar
+        </button>
+        <a href="/admin/siniestros"
+          class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-4 py-2 rounded-xl shadow transition-all w-full md:w-auto text-center">
+          Limpiar
+        </a>
+        <a href="/admin/dashboard" class="bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-xl shadow transition-all w-full md:w-auto text-center">
+          ⬅️ Menú
+        </a>
+      </form>
+    </div>
+
+    <!-- Botón Crear -->
+    <div class="text-right mb-4">
+      <button id="btnShowModalCrear" class="bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-xl shadow">
+        ➕ <span class="hidden md:inline">Crear</span> Siniestro
+      </button>
+    </div>
+
+    <!-- Lista de Siniestros -->
+    <div class="bg-white p-4 md:p-6 rounded-xl shadow-md overflow-x-auto">
+      <h3 class="text-lg md:text-xl font-semibold mb-4">Lista de Siniestros</h3>
+      
+      <!-- Vista de escritorio (tabla) -->
+      <table class="min-w-full text-sm text-left border-collapse hidden md:table">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="border px-3 py-2">Económico</th>
+            <th class="border px-3 py-2">Fecha</th>
+            <th class="border px-3 py-2">Tipo Unidad</th>
+            <th class="border px-3 py-2">Póliza</th>
+            <th class="border px-3 py-2">No. Reporte</th>
+            <th class="border px-3 py-2">Num. Siniestro</th>
+            <th class="border px-3 py-2">Taller</th>
+            <th class="border px-3 py-2">Importe</th>
+            <th class="border px-3 py-2">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (siniestros.length === 0) { %>
+          <tr>
+            <td colspan="9" class="p-4 text-center text-gray-400">
+              No hay registros
+            </td>
+          </tr>
+          <% } %>
+          <% siniestros.forEach(s => { %>
+          <tr class="hover:bg-gray-100">
+            <td class="border px-3 py-2"><%= s.economico %></td>
+            <td class="border px-3 py-2"><%= s.fecha %></td>
+            <td class="border px-3 py-2"><%= s.tipo_unidad %></td>
+            <td class="border px-3 py-2"><%= s.poliza %></td>
+            <td class="border px-3 py-2"><%= s.no_reporte %></td>
+            <td class="border px-3 py-2"><%= s.num_siniestro %></td>
+            <td class="border px-3 py-2"><%= s.taller_reparacion %></td>
+            <td class="border px-3 py-2">$<%= s.importe_reparacion.toFixed(2) %></td>
+            <td class="border px-3 py-2 flex gap-1 flex-wrap">
+              <button type="button" onclick='showEditModal(<%= JSON.stringify(s) %>)'
+                class="bg-yellow-400 hover:bg-yellow-500 text-white rounded px-2 py-1 text-xs">
+                ✏️ Editar
+              </button>
+              <form
+                action="/admin/siniestros/<%= s.id %>/delete"
+                method="POST"
+                class="inline"
+                onsubmit="return confirm('¿Eliminar este registro?')"
+              >
+                <button class="bg-red-500 hover:bg-red-600 text-white rounded px-2 py-1 text-xs">
+                  🗑️ Eliminar
+                </button>
+              </form>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      
+      <!-- Vista móvil (tarjetas) -->
+      <div class="md:hidden">
+        <% if (siniestros.length === 0) { %>
+          <div class="p-4 text-center text-gray-400">
+            No hay registros
+          </div>
+        <% } %>
+        <% siniestros.forEach(s => { %>
+          <div class="mobile-card">
+            <div class="mobile-card-row">
+              <span class="mobile-card-label">Económico:</span>
+              <span><%= s.economico %></span>
+            </div>
+            <div class="mobile-card-row">
+              <span class="mobile-card-label">Fecha:</span>
+              <span><%= s.fecha %></span>
+            </div>
+            <div class="mobile-card-row">
+              <span class="mobile-card-label">Tipo Unidad:</span>
+              <span><%= s.tipo_unidad %></span>
+            </div>
+            <div class="mobile-card-row">
+              <span class="mobile-card-label">Póliza:</span>
+              <span><%= s.poliza %></span>
+            </div>
+            <div class="mobile-card-row">
+              <span class="mobile-card-label">No. Reporte:</span>
+              <span><%= s.no_reporte %></span>
+            </div>
+            <div class="mobile-card-row">
+              <span class="mobile-card-label">Importe:</span>
+              <span>$<%= s.importe_reparacion.toFixed(2) %></span>
+            </div>
+            <div class="mobile-card-actions">
+              <button type="button" onclick='showEditModal(<%= JSON.stringify(s) %>)'
+                class="bg-yellow-400 hover:bg-yellow-500 text-white rounded px-2 py-1 text-xs">
+                ✏️ Editar
+              </button>
+              <form
+                action="/admin/siniestros/<%= s.id %>/delete"
+                method="POST"
+                class="inline"
+                onsubmit="return confirm('¿Eliminar este registro?')"
+              >
+                <button class="bg-red-500 hover:bg-red-600 text-white rounded px-2 py-1 text-xs">
+                  🗑️ Eliminar
+                </button>
+              </form>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Crear -->
+  <div id="modalCrear" class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-xl shadow-lg p-4 md:p-6 w-full max-w-2xl mx-4 relative">
+      <button id="btnHideModalCrear" class="absolute top-3 right-4 text-gray-400 hover:text-red-500 text-xl">&times;</button>
+      <h3 class="text-lg md:text-xl font-semibold mb-4">Agregar Siniestro</h3>
+      <form action="/admin/siniestros" method="POST" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input name="economico" placeholder="Económico" required class="border p-2 rounded w-full" />
+          <input name="fecha" type="date" required class="border p-2 rounded w-full" />
+          <select name="tipo_unidad" required class="border p-2 rounded w-full">
+            <option value="">Seleccione tipo de unidad</option>
+            <% [
+              "SEDAN", "HATCHBACK", "SUV", "PICKUP", "CAMIONETA", "CAMION", "TRAILER", "TRACTOCAMION",
+              "MOTOCICLETA", "BICICLETA", "CUATRIMOTO", "VAN", "MICROBUS", "AUTOBUS", "PANEL",
+              "GRUA", "TAXI", "UBER", "PESADO", "LIGERO"
+            ].forEach(t => { %>
+              <option value="<%= t %>"><%= t %></option>
+            <% }) %>
+          </select>
+          <input name="poliza" placeholder="Póliza" required class="border p-2 rounded w-full" />
+          <input name="no_reporte" placeholder="No. Reporte" required class="border p-2 rounded w-full" />
+          <input name="num_siniestro" placeholder="Num. Siniestro" required class="border p-2 rounded w-full" />
+          <input name="taller_reparacion" placeholder="Taller Reparación" required class="border p-2 rounded w-full" />
+          <input name="importe_reparacion" placeholder="Importe Reparación" required class="border p-2 rounded w-full" />
+        </div>
+        <div class="text-right">
+          <button class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Editar -->
+  <div id="modalEditar" class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-xl shadow-lg p-4 md:p-6 w-full max-w-2xl mx-4 relative">
+      <button onclick="hideEditModal()" class="absolute top-3 right-4 text-gray-400 hover:text-red-500 text-xl">&times;</button>
+      <h3 class="text-lg md:text-xl font-semibold mb-4">Editar Siniestro</h3>
+      <form id="formEditar" method="POST" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input name="economico" id="editEconomico" placeholder="Económico" required class="border p-2 rounded w-full" />
+          <input name="fecha" id="editFecha" type="date" required class="border p-2 rounded w-full" />
+          <select name="tipo_unidad" id="editTipoUnidad" required class="border p-2 rounded w-full">
+            <option value="">Seleccione tipo de unidad</option>
+            <% [
+              "SEDAN", "HATCHBACK", "SUV", "PICKUP", "CAMIONETA", "CAMION", "TRAILER", "TRACTOCAMION",
+              "MOTOCICLETA", "BICICLETA", "CUATRIMOTO", "VAN", "MICROBUS", "AUTOBUS", "PANEL",
+              "GRUA", "TAXI", "UBER", "PESADO", "LIGERO"
+            ].forEach(t => { %>
+              <option value="<%= t %>"><%= t %></option>
+            <% }) %>
+          </select>
+          <input name="poliza" id="editPoliza" placeholder="Póliza" required class="border p-2 rounded w-full" />
+          <input name="no_reporte" id="editNoReporte" placeholder="No. Reporte" required class="border p-2 rounded w-full" />
+          <input name="num_siniestro" id="editNumSiniestro" placeholder="Num. Siniestro" required class="border p-2 rounded w-full" />
+          <input name="taller_reparacion" id="editTaller" placeholder="Taller Reparación" required class="border p-2 rounded w-full" />
+          <input name="importe_reparacion" id="editImporte" placeholder="Importe Reparación" required class="border p-2 rounded w-full" />
+        </div>
+        <div class="text-right">
+          <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded">
+            Actualizar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const modalCrear = document.getElementById('modalCrear');
+    const btnShowModalCrear = document.getElementById('btnShowModalCrear');
+    const btnHideModalCrear = document.getElementById('btnHideModalCrear');
+    const modalEditar = document.getElementById('modalEditar');
+    const formEditar = document.getElementById('formEditar');
+
+    btnShowModalCrear.addEventListener('click', () => modalCrear.classList.remove('hidden'));
+    btnHideModalCrear.addEventListener('click', () => modalCrear.classList.add('hidden'));
+    modalCrear.addEventListener('click', e => { if (e.target === modalCrear) modalCrear.classList.add('hidden') });
+
+    function showEditModal(data) {
+      formEditar.action = `/admin/siniestros/${data.id}`;
+      document.getElementById('editEconomico').value = data.economico;
+      document.getElementById('editFecha').value = data.fecha;
+      document.getElementById('editTipoUnidad').value = data.tipo_unidad;
+      document.getElementById('editPoliza').value = data.poliza;
+      document.getElementById('editNoReporte').value = data.no_reporte;
+      document.getElementById('editNumSiniestro').value = data.num_siniestro;
+      document.getElementById('editTaller').value = data.taller_reparacion;
+      document.getElementById('editImporte').value = data.importe_reparacion;
+      modalEditar.classList.remove('hidden');
+    }
+
+    function hideEditModal() {
+      modalEditar.classList.add('hidden');
+    }
+  </script>
+</body>
+</html>

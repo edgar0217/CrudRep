@@ -2,8 +2,41 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Estilos específicos para móviles */
+    @media (max-width: 767px) {
+      .table-header-group {
+        display: none;
+      }
+      .mobile-card {
+        display: block;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: white;
+      }
+      .mobile-card-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+      }
+      .mobile-card-label {
+        font-weight: 600;
+        color: #4a5568;
+        margin-right: 0.5rem;
+      }
+      .mobile-card-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+    }
+  </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 pb-12">
   <div class="container mx-auto p-4">
@@ -18,11 +51,11 @@
 
     <!-- Encabezado -->
     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-      <h1 class="text-3xl font-extrabold text-blue-900 drop-shadow tracking-tight flex items-center gap-2">
+      <h1 class="text-2xl md:text-3xl font-extrabold text-blue-900 drop-shadow tracking-tight flex items-center gap-2">
         <span>🔧</span> Reparaciones 2025 <span class="text-xs font-semibold text-gray-500">(Admin)</span>
       </h1>
       <a href="/logout" class="flex items-center bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl font-semibold shadow gap-1 transition">
-        <span>Cerrar sesión</span> <span class="text-xl">⏻</span>
+        <span class="hidden md:inline">Cerrar sesión</span> <span class="text-xl">⏻</span>
       </a>
     </div>
 
@@ -57,7 +90,7 @@
             id="btnShowModalCrear"
             class="bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-lg shadow transition-all md:ml-4 w-full md:w-auto"
             type="button">
-            ➕ Nueva reparación
+            ➕ <span class="hidden md:inline">Nueva</span> reparación
           </button>
         </div>
       </div>
@@ -72,7 +105,7 @@
 
     <!-- Modal crear reparación -->
     <div id="modalCrear" class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center hidden">
-      <div class="bg-white rounded-2xl shadow-xl p-8 max-w-2xl w-full relative">
+      <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 max-w-2xl w-full mx-4 relative">
         <button id="btnHideModalCrear" type="button" class="absolute right-4 top-4 text-gray-400 hover:text-red-500 text-2xl font-bold transition">×</button>
         <h2 class="text-xl font-bold text-blue-700 mb-4 flex items-center gap-2">➕ Nueva reparación</h2>
         <form
@@ -104,7 +137,8 @@
 
     <!-- Tabla de Reparaciones -->
     <div class="overflow-x-auto mb-8 rounded-xl shadow border border-gray-200 bg-white/90">
-      <table class="min-w-full text-xs md:text-sm">
+      <!-- Vista de escritorio (tabla) -->
+      <table class="min-w-full text-xs md:text-sm hidden md:table">
         <thead>
           <tr class="bg-blue-100 text-blue-900">
             <th class="px-3 py-2 font-bold">Económico</th>
@@ -170,12 +204,68 @@
           <% }) %>
         </tbody>
       </table>
+      
+      <!-- Vista móvil (tarjetas) -->
+      <div class="md:hidden p-2">
+        <% if (reparaciones.length === 0) { %>
+          <div class="p-4 text-center text-gray-400">
+            No hay reparaciones
+          </div>
+        <% } %>
+        <% reparaciones.forEach(rep => { %>
+          <div class="mobile-card">
+            <div class="mobile-card-row">
+              <span class="mobile-card-label">Económico:</span>
+              <span class="font-mono"><%= rep.economico %></span>
+            </div>
+            <div class="mobile-card-row">
+              <span class="mobile-card-label">Fecha:</span>
+              <span><%= rep.fecha %></span>
+            </div>
+            <div class="mobile-card-row">
+              <span class="mobile-card-label">Taller:</span>
+              <span><%= rep.taller %></span>
+            </div>
+            <div class="mobile-card-row">
+              <span class="mobile-card-label">Concepto:</span>
+              <span><%= rep.concepto %></span>
+            </div>
+            <div class="mobile-card-row">
+              <span class="mobile-card-label">Importe:</span>
+              <span class="font-semibold">$<%= rep.importe %></span>
+            </div>
+            <div class="mobile-card-row">
+              <span class="mobile-card-label">Pagado:</span>
+              <span class="inline-block px-2 py-0.5 rounded-full text-xs <%= rep.pagado ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-800' %>">
+                <%= rep.pagado ? "Sí" : "No" %>
+              </span>
+            </div>
+            <div class="mobile-card-actions">
+              <button
+                type="button"
+                class="bg-yellow-400 hover:bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center transition"
+                onclick="showEditForm(<%= rep.id %>)"
+                title="Editar">
+                <span class="text-lg">✏️</span>
+              </button>
+              <form action="/admin/reparaciones/<%= rep.id %>/delete" method="POST" class="inline"
+                    onsubmit="return confirm('¿Seguro que quieres eliminar esta reparación?')">
+                <button type="submit"
+                  class="bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center transition"
+                  title="Eliminar">
+                  <span class="text-lg">🗑️</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        <% }) %>
+      </div>
     </div>
   </div>
 
   <!-- Modal editar reparación -->
   <div id="editModal" class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center hidden">
-    <div class="bg-white rounded-2xl shadow-xl p-8 max-w-xl w-full relative">
+    <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 max-w-xl w-full mx-4 relative">
       <button id="closeEditModal" type="button" class="absolute right-4 top-4 text-gray-400 hover:text-red-500 text-2xl font-bold transition">×</button>
       <h2 class="text-xl font-bold text-blue-700 mb-4 flex items-center gap-2">✏️ Editar reparación</h2>
       <form id="editForm" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4">
