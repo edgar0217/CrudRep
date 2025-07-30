@@ -378,7 +378,7 @@
     });
 
     // --- Modal de edición ---
-    const reparaciones = <% - JSON.stringify(reparaciones) %>;
+    const reparaciones = <%- JSON.stringify(reparaciones) %>;
     function showEditForm(id) {
       const rep = reparaciones.find(r => r.id === id);
       if (!rep) return;
