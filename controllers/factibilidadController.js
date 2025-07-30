@@ -1,4 +1,5 @@
 import Factibilidad from "../models/Factibilidad.js";
+import { Op } from "sequelize";
 
 export const listarFactibilidades = async (req, res) => {
   const { q = "", order = "" } = req.query;

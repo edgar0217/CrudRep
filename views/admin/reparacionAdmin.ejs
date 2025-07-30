@@ -1,16 +1,22 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    .cfe-bg-pattern {
+      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgwLCAxNTAsIDY0LCAwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==");
+    }
+
     /* Estilos específicos para móviles */
     @media (max-width: 767px) {
       .table-header-group {
         display: none;
       }
+
       .mobile-card {
         display: block;
         border: 1px solid #e2e8f0;
@@ -19,16 +25,19 @@
         padding: 1rem;
         background: white;
       }
+
       .mobile-card-row {
         display: flex;
         justify-content: space-between;
         margin-bottom: 0.5rem;
       }
+
       .mobile-card-label {
         font-weight: 600;
         color: #4a5568;
         margin-right: 0.5rem;
       }
+
       .mobile-card-actions {
         display: flex;
         justify-content: flex-end;
@@ -38,12 +47,13 @@
     }
   </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 pb-12">
-  <div class="container mx-auto p-4">
+
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 pb-12 cfe-bg-pattern">
+  <div class="container mx-auto p-4 cfe-bg-pattern">
     <!-- Botón regresar al menú -->
     <div class="mb-6">
       <a href="/admin/dashboard"
-         class="inline-flex items-center gap-2 bg-gray-200 hover:bg-blue-200 text-blue-800 font-semibold px-4 py-2 rounded-xl shadow transition">
+        class="inline-flex items-center gap-2 bg-gray-200 hover:bg-blue-200 text-blue-800 font-semibold px-4 py-2 rounded-xl shadow transition">
         <span class="text-lg">←</span>
         <span>Regresar al menú</span>
       </a>
@@ -54,7 +64,8 @@
       <h1 class="text-2xl md:text-3xl font-extrabold text-blue-900 drop-shadow tracking-tight flex items-center gap-2">
         <span>🔧</span> Reparaciones 2025 <span class="text-xs font-semibold text-gray-500">(Admin)</span>
       </h1>
-      <a href="/logout" class="flex items-center bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl font-semibold shadow gap-1 transition">
+      <a href="/logout"
+        class="flex items-center bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl font-semibold shadow gap-1 transition">
         <span class="hidden md:inline">Cerrar sesión</span> <span class="text-xl">⏻</span>
       </a>
     </div>
@@ -64,30 +75,35 @@
       <div class="flex flex-col md:flex-row md:items-center gap-2 mb-2">
         <!-- Filtros -->
         <form class="flex flex-col md:flex-row items-center gap-2 flex-1" method="GET" action="/admin/reparaciones">
-          <input name="q" value="<%= q %>" class="border border-gray-300 focus:border-blue-400 focus:ring focus:ring-blue-100 p-2 rounded-lg outline-none transition w-full md:w-56" placeholder="🔎 Buscar (Económico, Orden...)" />
-          <select name="order" class="border border-gray-300 p-2 rounded-lg focus:border-blue-400 transition w-full md:w-auto">
-            <option value="fecha_desc" <%= order === "fecha_desc" ? "selected" : "" %>>Más recientes</option>
-            <option value="fecha_asc" <%= order === "fecha_asc" ? "selected" : "" %>>Más antiguos</option>
-            <option value="economico_az" <%= order === "economico_az" ? "selected" : "" %>>Económico A-Z</option>
-            <option value="economico_za" <%= order === "economico_za" ? "selected" : "" %>>Económico Z-A</option>
-            <option value="importe_mayor" <%= order === "importe_mayor" ? "selected" : "" %>>Importe mayor a menor</option>
-            <option value="importe_menor" <%= order === "importe_menor" ? "selected" : "" %>>Importe menor a mayor</option>
-            <option value="pagado_si" <%= order === "pagado_si" ? "selected" : "" %>>Pagados primero</option>
-            <option value="pagado_no" <%= order === "pagado_no" ? "selected" : "" %>>No pagados primero</option>
+          <input name="q" value="<%= q %>"
+            class="border border-gray-300 focus:border-blue-400 focus:ring focus:ring-blue-100 p-2 rounded-lg outline-none transition w-full md:w-56"
+            placeholder="🔎 Buscar (Económico, Orden...)" />
+          <select name="order"
+            class="border border-gray-300 p-2 rounded-lg focus:border-blue-400 transition w-full md:w-auto">
+            <option value="fecha_desc" <%=order==="fecha_desc" ? "selected" : "" %>>Más recientes</option>
+            <option value="fecha_asc" <%=order==="fecha_asc" ? "selected" : "" %>>Más antiguos</option>
+            <option value="economico_az" <%=order==="economico_az" ? "selected" : "" %>>Económico A-Z</option>
+            <option value="economico_za" <%=order==="economico_za" ? "selected" : "" %>>Económico Z-A</option>
+            <option value="importe_mayor" <%=order==="importe_mayor" ? "selected" : "" %>>Importe mayor a menor</option>
+            <option value="importe_menor" <%=order==="importe_menor" ? "selected" : "" %>>Importe menor a mayor</option>
+            <option value="pagado_si" <%=order==="pagado_si" ? "selected" : "" %>>Pagados primero</option>
+            <option value="pagado_no" <%=order==="pagado_no" ? "selected" : "" %>>No pagados primero</option>
           </select>
-          <select name="pagado" class="border border-gray-300 p-2 rounded-lg focus:border-blue-400 transition w-full md:w-auto">
-            <option value="" <%= pagado === "" ? "selected" : "" %>>Todos</option>
-            <option value="si" <%= pagado === "si" ? "selected" : "" %>>Solo pagados</option>
-            <option value="no" <%= pagado === "no" ? "selected" : "" %>>Solo no pagados</option>
+          <select name="pagado"
+            class="border border-gray-300 p-2 rounded-lg focus:border-blue-400 transition w-full md:w-auto">
+            <option value="" <%=pagado==="" ? "selected" : "" %>>Todos</option>
+            <option value="si" <%=pagado==="si" ? "selected" : "" %>>Solo pagados</option>
+            <option value="no" <%=pagado==="no" ? "selected" : "" %>>Solo no pagados</option>
           </select>
-          <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-lg shadow transition-all w-full md:w-auto" type="submit">
+          <button
+            class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-lg shadow transition-all w-full md:w-auto"
+            type="submit">
             Buscar
           </button>
         </form>
         <!-- Botón "Nueva reparación" alineado a la derecha -->
         <div class="flex md:justify-end w-full md:w-auto">
-          <button
-            id="btnShowModalCrear"
+          <button id="btnShowModalCrear"
             class="bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-lg shadow transition-all md:ml-4 w-full md:w-auto"
             type="button">
             ➕ <span class="hidden md:inline">Nueva</span> reparación
@@ -96,7 +112,8 @@
       </div>
       <div class="flex mt-2 gap-2">
         <form method="GET" action="/admin/reparaciones">
-          <button class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg font-semibold transition-all" type="submit">
+          <button class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg font-semibold transition-all"
+            type="submit">
             Limpiar filtro
           </button>
         </form>
@@ -106,29 +123,38 @@
     <!-- Modal crear reparación -->
     <div id="modalCrear" class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center hidden">
       <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 max-w-2xl w-full mx-4 relative">
-        <button id="btnHideModalCrear" type="button" class="absolute right-4 top-4 text-gray-400 hover:text-red-500 text-2xl font-bold transition">×</button>
+        <button id="btnHideModalCrear" type="button"
+          class="absolute right-4 top-4 text-gray-400 hover:text-red-500 text-2xl font-bold transition">×</button>
         <h2 class="text-xl font-bold text-blue-700 mb-4 flex items-center gap-2">➕ Nueva reparación</h2>
-        <form
-          method="POST"
-          action="/admin/reparaciones"
-          class="grid grid-cols-1 md:grid-cols-2 gap-4"
-        >
-          <input name="economico" placeholder="Económico" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg col-span-1 md:col-span-2 outline-none transition" required />
-          <input name="fecha" type="date" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" required />
-          <input name="taller" placeholder="Taller" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" required />
-          <input name="cotiza" placeholder="Cotiza" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
-          <input name="concepto" placeholder="Concepto" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
+        <form method="POST" action="/admin/reparaciones" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input name="economico" placeholder="Económico"
+            class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg col-span-1 md:col-span-2 outline-none transition"
+            required />
+          <input name="fecha" type="date" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg"
+            required />
+          <input name="taller" placeholder="Taller" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg"
+            required />
+          <input name="cotiza" placeholder="Cotiza"
+            class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
+          <input name="concepto" placeholder="Concepto"
+            class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
           <input name="orden" placeholder="Orden" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
-          <input name="importe" type="number" step="0.01" placeholder="Importe" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
-          <input name="autorizacion" placeholder="Autorización" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
+          <input name="importe" type="number" step="0.01" placeholder="Importe"
+            class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
+          <input name="autorizacion" placeholder="Autorización"
+            class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
           <input name="pagos" placeholder="Pagos" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
           <div class="flex items-center gap-3 col-span-1 md:col-span-2">
             <label class="mr-2 font-semibold text-gray-700">Pagado</label>
             <input type="checkbox" name="pagado" value="true" class="w-5 h-5 accent-blue-500" />
-            <input name="num_contrato" placeholder="Núm. Contrato" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg flex-1" />
+            <input name="num_contrato" placeholder="Núm. Contrato"
+              class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg flex-1" />
           </div>
-          <textarea name="observacion" placeholder="Observación" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg col-span-1 md:col-span-2" rows="2"></textarea>
-          <button type="submit" class="bg-green-500 hover:bg-green-600 text-white py-2 px-6 rounded-lg col-span-1 md:col-span-2 font-bold shadow transition">
+          <textarea name="observacion" placeholder="Observación"
+            class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg col-span-1 md:col-span-2"
+            rows="2"></textarea>
+          <button type="submit"
+            class="bg-green-500 hover:bg-green-600 text-white py-2 px-6 rounded-lg col-span-1 md:col-span-2 font-bold shadow transition">
             Guardar
           </button>
         </form>
@@ -157,108 +183,135 @@
           </tr>
         </thead>
         <tbody>
-          <% if (reparaciones.length === 0) { %>
-          <tr>
-            <td colspan="13" class="p-4 text-center text-gray-400">
-              No hay reparaciones
-            </td>
-          </tr>
-          <% } %>
-          <% reparaciones.forEach(rep => { %>
-          <tr class="hover:bg-blue-50 border-t transition">
-            <td class="px-3 py-2 font-mono"><%= rep.economico %></td>
-            <td class="px-3 py-2"><%= rep.fecha %></td>
-            <td class="px-3 py-2"><%= rep.taller %></td>
-            <td class="px-3 py-2"><%= rep.cotiza %></td>
-            <td class="px-3 py-2"><%= rep.concepto %></td>
-            <td class="px-3 py-2"><%= rep.orden %></td>
-            <td class="px-3 py-2 text-right">$<%= rep.importe %></td>
-            <td class="px-3 py-2"><%= rep.autorizacion %></td>
-            <td class="px-3 py-2"><%= rep.pagos %></td>
-            <td class="px-3 py-2 font-semibold">
-              <span class="inline-block px-2 py-0.5 rounded-full text-xs <%= rep.pagado ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-800' %>">
-                <%= rep.pagado ? "Sí" : "No" %>
-              </span>
-            </td>
-            <td class="px-3 py-2 max-w-xs truncate"><%= rep.observacion %></td>
-            <td class="px-3 py-2"><%= rep.num_contrato %></td>
-            <!-- Acciones ICONOS sticky -->
-            <td class="px-3 py-2 flex gap-2 bg-white sticky right-0 z-10 justify-center">
-              <button
-                type="button"
-                class="bg-yellow-400 hover:bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center transition"
-                onclick="showEditForm(<%= rep.id %>)"
-                title="Editar">
-                <span class="text-lg">✏️</span>
-              </button>
-              <form action="/admin/reparaciones/<%= rep.id %>/delete" method="POST" class="inline"
-                    onsubmit="return confirm('¿Seguro que quieres eliminar esta reparación?')">
-                <button type="submit"
-                  class="bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center transition"
-                  title="Eliminar">
-                  <span class="text-lg">🗑️</span>
-                </button>
-              </form>
-            </td>
-          </tr>
-          <% }) %>
+          <% if (reparaciones.length===0) { %>
+            <tr>
+              <td colspan="13" class="p-4 text-center text-gray-400">
+                No hay reparaciones
+              </td>
+            </tr>
+            <% } %>
+              <% reparaciones.forEach(rep=> { %>
+                <tr class="hover:bg-blue-50 border-t transition">
+                  <td class="px-3 py-2 font-mono">
+                    <%= rep.economico %>
+                  </td>
+                  <td class="px-3 py-2">
+                    <%= rep.fecha %>
+                  </td>
+                  <td class="px-3 py-2">
+                    <%= rep.taller %>
+                  </td>
+                  <td class="px-3 py-2">
+                    <%= rep.cotiza %>
+                  </td>
+                  <td class="px-3 py-2">
+                    <%= rep.concepto %>
+                  </td>
+                  <td class="px-3 py-2">
+                    <%= rep.orden %>
+                  </td>
+                  <td class="px-3 py-2 text-right">$<%= rep.importe %>
+                  </td>
+                  <td class="px-3 py-2">
+                    <%= rep.autorizacion %>
+                  </td>
+                  <td class="px-3 py-2">
+                    <%= rep.pagos %>
+                  </td>
+                  <td class="px-3 py-2 font-semibold">
+                    <span
+                      class="inline-block px-2 py-0.5 rounded-full text-xs <%= rep.pagado ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-800' %>">
+                      <%= rep.pagado ? "Sí" : "No" %>
+                    </span>
+                  </td>
+                  <td class="px-3 py-2 max-w-xs truncate">
+                    <%= rep.observacion %>
+                  </td>
+                  <td class="px-3 py-2">
+                    <%= rep.num_contrato %>
+                  </td>
+                  <!-- Acciones ICONOS sticky -->
+                  <td class="px-3 py-2 flex gap-2 bg-white sticky right-0 z-10 justify-center">
+                    <button type="button"
+                      class="bg-yellow-400 hover:bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center transition"
+                      onclick="showEditForm(<%= rep.id %>)" title="Editar">
+                      <span class="text-lg">✏️</span>
+                    </button>
+                    <form action="/admin/reparaciones/<%= rep.id %>/delete" method="POST" class="inline"
+                      onsubmit="return confirm('¿Seguro que quieres eliminar esta reparación?')">
+                      <button type="submit"
+                        class="bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center transition"
+                        title="Eliminar">
+                        <span class="text-lg">🗑️</span>
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                <% }) %>
         </tbody>
       </table>
-      
+
       <!-- Vista móvil (tarjetas) -->
       <div class="md:hidden p-2">
-        <% if (reparaciones.length === 0) { %>
+        <% if (reparaciones.length===0) { %>
           <div class="p-4 text-center text-gray-400">
             No hay reparaciones
           </div>
-        <% } %>
-        <% reparaciones.forEach(rep => { %>
-          <div class="mobile-card">
-            <div class="mobile-card-row">
-              <span class="mobile-card-label">Económico:</span>
-              <span class="font-mono"><%= rep.economico %></span>
-            </div>
-            <div class="mobile-card-row">
-              <span class="mobile-card-label">Fecha:</span>
-              <span><%= rep.fecha %></span>
-            </div>
-            <div class="mobile-card-row">
-              <span class="mobile-card-label">Taller:</span>
-              <span><%= rep.taller %></span>
-            </div>
-            <div class="mobile-card-row">
-              <span class="mobile-card-label">Concepto:</span>
-              <span><%= rep.concepto %></span>
-            </div>
-            <div class="mobile-card-row">
-              <span class="mobile-card-label">Importe:</span>
-              <span class="font-semibold">$<%= rep.importe %></span>
-            </div>
-            <div class="mobile-card-row">
-              <span class="mobile-card-label">Pagado:</span>
-              <span class="inline-block px-2 py-0.5 rounded-full text-xs <%= rep.pagado ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-800' %>">
-                <%= rep.pagado ? "Sí" : "No" %>
-              </span>
-            </div>
-            <div class="mobile-card-actions">
-              <button
-                type="button"
-                class="bg-yellow-400 hover:bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center transition"
-                onclick="showEditForm(<%= rep.id %>)"
-                title="Editar">
-                <span class="text-lg">✏️</span>
-              </button>
-              <form action="/admin/reparaciones/<%= rep.id %>/delete" method="POST" class="inline"
+          <% } %>
+            <% reparaciones.forEach(rep=> { %>
+              <div class="mobile-card">
+                <div class="mobile-card-row">
+                  <span class="mobile-card-label">Económico:</span>
+                  <span class="font-mono">
+                    <%= rep.economico %>
+                  </span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="mobile-card-label">Fecha:</span>
+                  <span>
+                    <%= rep.fecha %>
+                  </span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="mobile-card-label">Taller:</span>
+                  <span>
+                    <%= rep.taller %>
+                  </span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="mobile-card-label">Concepto:</span>
+                  <span>
+                    <%= rep.concepto %>
+                  </span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="mobile-card-label">Importe:</span>
+                  <span class="font-semibold">$<%= rep.importe %></span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="mobile-card-label">Pagado:</span>
+                  <span
+                    class="inline-block px-2 py-0.5 rounded-full text-xs <%= rep.pagado ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-800' %>">
+                    <%= rep.pagado ? "Sí" : "No" %>
+                  </span>
+                </div>
+                <div class="mobile-card-actions">
+                  <button type="button"
+                    class="bg-yellow-400 hover:bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center transition"
+                    onclick="showEditForm(<%= rep.id %>)" title="Editar">
+                    <span class="text-lg">✏️</span>
+                  </button>
+                  <form action="/admin/reparaciones/<%= rep.id %>/delete" method="POST" class="inline"
                     onsubmit="return confirm('¿Seguro que quieres eliminar esta reparación?')">
-                <button type="submit"
-                  class="bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center transition"
-                  title="Eliminar">
-                  <span class="text-lg">🗑️</span>
-                </button>
-              </form>
-            </div>
-          </div>
-        <% }) %>
+                    <button type="submit"
+                      class="bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center transition"
+                      title="Eliminar">
+                      <span class="text-lg">🗑️</span>
+                    </button>
+                  </form>
+                </div>
+              </div>
+              <% }) %>
       </div>
     </div>
   </div>
@@ -266,26 +319,41 @@
   <!-- Modal editar reparación -->
   <div id="editModal" class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center hidden">
     <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 max-w-xl w-full mx-4 relative">
-      <button id="closeEditModal" type="button" class="absolute right-4 top-4 text-gray-400 hover:text-red-500 text-2xl font-bold transition">×</button>
+      <button id="closeEditModal" type="button"
+        class="absolute right-4 top-4 text-gray-400 hover:text-red-500 text-2xl font-bold transition">×</button>
       <h2 class="text-xl font-bold text-blue-700 mb-4 flex items-center gap-2">✏️ Editar reparación</h2>
       <form id="editForm" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <input type="hidden" name="id" id="edit_id" />
-        <input name="economico" id="edit_economico" placeholder="Económico" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg col-span-1 md:col-span-2 outline-none transition" required />
-        <input name="fecha" type="date" id="edit_fecha" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" required />
-        <input name="taller" id="edit_taller" placeholder="Taller" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" required />
-        <input name="cotiza" id="edit_cotiza" placeholder="Cotiza" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
-        <input name="concepto" id="edit_concepto" placeholder="Concepto" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
-        <input name="orden" id="edit_orden" placeholder="Orden" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
-        <input name="importe" type="number" step="0.01" id="edit_importe" placeholder="Importe" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
-        <input name="autorizacion" id="edit_autorizacion" placeholder="Autorización" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
-        <input name="pagos" id="edit_pagos" placeholder="Pagos" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
+        <input name="economico" id="edit_economico" placeholder="Económico"
+          class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg col-span-1 md:col-span-2 outline-none transition"
+          required />
+        <input name="fecha" type="date" id="edit_fecha"
+          class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" required />
+        <input name="taller" id="edit_taller" placeholder="Taller"
+          class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" required />
+        <input name="cotiza" id="edit_cotiza" placeholder="Cotiza"
+          class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
+        <input name="concepto" id="edit_concepto" placeholder="Concepto"
+          class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
+        <input name="orden" id="edit_orden" placeholder="Orden"
+          class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
+        <input name="importe" type="number" step="0.01" id="edit_importe" placeholder="Importe"
+          class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
+        <input name="autorizacion" id="edit_autorizacion" placeholder="Autorización"
+          class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
+        <input name="pagos" id="edit_pagos" placeholder="Pagos"
+          class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg" />
         <div class="flex items-center gap-3 col-span-1 md:col-span-2">
           <label class="mr-2 font-semibold text-gray-700">Pagado</label>
           <input type="checkbox" name="pagado" id="edit_pagado" value="true" class="w-5 h-5 accent-blue-500" />
-          <input name="num_contrato" id="edit_num_contrato" placeholder="Núm. Contrato" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg flex-1" />
+          <input name="num_contrato" id="edit_num_contrato" placeholder="Núm. Contrato"
+            class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg flex-1" />
         </div>
-        <textarea name="observacion" id="edit_observacion" placeholder="Observación" class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg col-span-1 md:col-span-2" rows="2"></textarea>
-        <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-6 rounded-lg col-span-1 md:col-span-2 font-bold shadow transition">
+        <textarea name="observacion" id="edit_observacion" placeholder="Observación"
+          class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg col-span-1 md:col-span-2"
+          rows="2"></textarea>
+        <button type="submit"
+          class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-6 rounded-lg col-span-1 md:col-span-2 font-bold shadow transition">
           Guardar cambios
         </button>
       </form>
@@ -310,13 +378,13 @@
     });
 
     // --- Modal de edición ---
-    const reparaciones = <%- JSON.stringify(reparaciones) %>;
+    const reparaciones = <% - JSON.stringify(reparaciones) %>;
     function showEditForm(id) {
       const rep = reparaciones.find(r => r.id === id);
       if (!rep) return;
       document.getElementById('edit_id').value = rep.id;
       document.getElementById('edit_economico').value = rep.economico;
-      document.getElementById('edit_fecha').value = rep.fecha ? rep.fecha.slice(0,10) : '';
+      document.getElementById('edit_fecha').value = rep.fecha ? rep.fecha.slice(0, 10) : '';
       document.getElementById('edit_taller').value = rep.taller || '';
       document.getElementById('edit_cotiza').value = rep.cotiza || '';
       document.getElementById('edit_concepto').value = rep.concepto || '';
@@ -339,4 +407,5 @@
     });
   </script>
 </body>
+
 </html>
