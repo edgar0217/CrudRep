@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
-import User from "./models/user.js";
-import db from "./config/database.js";
+import User from "../models/user.js";
+import db from "../config/database.js";
 
 async function createAdmin() {
   try {

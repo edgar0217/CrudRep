@@ -6,7 +6,7 @@
     <title>Factibilidad</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-            .cfe-bg-pattern {
+      .cfe-bg-pattern {
         background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgwLCAxNTAsIDY0LCAwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==");
       }
       /* Estilos específicos para móviles */
@@ -40,6 +40,12 @@
           margin-top: 1rem;
         }
       }
+      .factible {
+        background-color: rgba(0, 255, 0, 0.1);
+      }
+      .no-factible {
+        background-color: rgba(255, 0, 0, 0.1);
+      }
     </style>
   </head>
   <body class="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 pb-12 cfe-bg-pattern">
@@ -68,11 +74,15 @@
       <div class="bg-white/80 rounded-2xl shadow-lg p-4 mb-8 flex flex-col gap-4">
         <div class="flex flex-col md:flex-row md:items-center gap-4 w-full">
           <form class="flex flex-col sm:flex-row gap-2 flex-1 w-full" method="GET" action="/admin/factibilidad">
-            <input name="q" value="<%= q || '' %>" type="text" placeholder="Buscar por orden..."
+            <input name="q" value="<%= q || '' %>" type="text" placeholder="Buscar por orden, número económico o concepto..."
               class="w-full sm:w-1/3 border px-4 py-2 rounded-xl shadow-sm focus:ring-blue-500" />
             <select name="order" class="border px-4 py-2 rounded-xl w-full sm:w-auto">
               <option value="orden_asc" <%=order==="orden_asc" ? "selected" : "" %>>Orden A-Z</option>
               <option value="orden_desc" <%=order==="orden_desc" ? "selected" : "" %>>Orden Z-A</option>
+              <option value="num_economico_asc" <%=order==="num_economico_asc" ? "selected" : "" %>>Núm. Económico A-Z</option>
+              <option value="num_economico_desc" <%=order==="num_economico_desc" ? "selected" : "" %>>Núm. Económico Z-A</option>
+              <option value="fecha_asc" <%=order==="fecha_asc" ? "selected" : "" %>>Fecha ↑</option>
+              <option value="fecha_desc" <%=order==="fecha_desc" ? "selected" : "" %>>Fecha ↓</option>
               <option value="presupuesto_asc" <%=order==="presupuesto_asc" ? "selected" : "" %>>Presupuesto ↑</option>
               <option value="presupuesto_desc" <%=order==="presupuesto_desc" ? "selected" : "" %>>Presupuesto ↓</option>
             </select>
@@ -105,28 +115,64 @@
         <table class="min-w-full text-sm sm:text-base hidden md:table">
           <thead>
             <tr class="bg-blue-100 text-blue-900">
+              <th class="px-3 py-2 font-bold">Núm. Económico</th>
+              <th class="px-3 py-2 font-bold">Fecha</th>
+              <th class="px-3 py-2 font-bold">Concepto</th>
+              <th class="px-3 py-2 font-bold">Valor Comercial</th>
+              <th class="px-3 py-2 font-bold">Valor Actual</th>
+              <th class="px-3 py-2 font-bold">Venta/Compra</th>
+              <th class="px-3 py-2 font-bold">Presupuesto Rep.</th>
+              <th class="px-3 py-2 font-bold">Control Gastos</th>
               <th class="px-3 py-2 font-bold">Orden</th>
               <th class="px-3 py-2 font-bold">Presupuesto</th>
+              <th class="px-3 py-2 font-bold">Factible</th>
               <th class="px-3 py-2 font-bold">Acciones</th>
             </tr>
           </thead>
           <tbody>
             <% if (factibilidades.length === 0) { %>
             <tr>
-              <td colspan="3" class="p-4 text-center text-gray-400">
+              <td colspan="12" class="p-4 text-center text-gray-400">
                 No hay registros
               </td>
             </tr>
             <% } %> 
             <% factibilidades.forEach(f => { %>
-            <tr class="hover:bg-blue-50 border-t transition">
+            <tr class="hover:bg-blue-50 border-t transition <%= f.presupuesto_reparacion < f.valor_actual ? 'factible' : 'no-factible' %>">
+              <td class="px-3 py-2"><%= f.num_economico %></td>
+              <td class="px-3 py-2"><%= new Date(f.fecha).toLocaleDateString() %></td>
+              <td class="px-3 py-2"><%= f.concepto %></td>
+              <td class="px-3 py-2">$<%= f.valor_comercial.toLocaleString() %></td>
+              <td class="px-3 py-2">$<%= f.valor_actual.toLocaleString() %></td>
+              <td class="px-3 py-2"><%= f.venta_compra ? 'Venta' : 'Compra' %></td>
+              <td class="px-3 py-2">$<%= f.presupuesto_reparacion.toLocaleString() %></td>
+              <td class="px-3 py-2">$<%= f.control_gastos ? f.control_gastos.toLocaleString() : 'N/A' %></td>
               <td class="px-3 py-2"><%= f.orden %></td>
-              <td class="px-3 py-2">$<%= f.presupuesto %></td>
+              <td class="px-3 py-2">$<%= f.presupuesto.toLocaleString() %></td>
+              <td class="px-3 py-2">
+                <% if (f.presupuesto_reparacion < f.valor_actual) { %>
+                  <span class="text-green-600 font-bold">Sí</span>
+                <% } else { %>
+                  <span class="text-red-600 font-bold">No</span>
+                <% } %>
+              </td>
               <td class="px-3 py-2 flex gap-2 flex-wrap">
                 <button
                   type="button"
                   class="bg-yellow-400 hover:bg-yellow-500 text-white rounded px-3 py-1"
-                  onclick="showEditarModal(<%= f.id %>, '<%= f.orden %>', <%= f.presupuesto %>)"
+                  onclick="showEditarModal(
+                    <%= f.id %>, 
+                    '<%= f.num_economico %>', 
+                    '<%= f.fecha.toISOString().split('T')[0] %>', 
+                    '<%= f.concepto.replace(/'/g, "\\'") %>', 
+                    <%= f.valor_comercial %>, 
+                    <%= f.valor_actual %>, 
+                    <%= f.venta_compra %>, 
+                    <%= f.presupuesto_reparacion %>, 
+                    <%= f.control_gastos || 0 %>, 
+                    '<%= f.orden %>', 
+                    <%= f.presupuesto %>
+                  )"
                 >
                   ✏️
                 </button>
@@ -157,20 +203,74 @@
             </div>
           <% } %>
           <% factibilidades.forEach(f => { %>
-            <div class="mobile-card">
+            <div class="mobile-card <%= f.presupuesto_reparacion < f.valor_actual ? 'factible' : 'no-factible' %>">
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">Núm. Económico:</span>
+                <span><%= f.num_economico %></span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">Fecha:</span>
+                <span><%= new Date(f.fecha).toLocaleDateString() %></span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">Concepto:</span>
+                <span><%= f.concepto %></span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">Valor Comercial:</span>
+                <span>$<%= f.valor_comercial.toLocaleString() %></span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">Valor Actual:</span>
+                <span>$<%= f.valor_actual.toLocaleString() %></span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">Venta/Compra:</span>
+                <span><%= f.venta_compra ? 'Venta' : 'Compra' %></span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">Presupuesto Rep.:</span>
+                <span>$<%= f.presupuesto_reparacion.toLocaleString() %></span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">Control Gastos:</span>
+                <span>$<%= f.control_gastos ? f.control_gastos.toLocaleString() : 'N/A' %></span>
+              </div>
               <div class="mobile-card-row">
                 <span class="mobile-card-label">Orden:</span>
                 <span><%= f.orden %></span>
               </div>
               <div class="mobile-card-row">
                 <span class="mobile-card-label">Presupuesto:</span>
-                <span>$<%= f.presupuesto %></span>
+                <span>$<%= f.presupuesto.toLocaleString() %></span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">Factible:</span>
+                <span>
+                  <% if (f.presupuesto_reparacion < f.valor_actual) { %>
+                    <span class="text-green-600 font-bold">Sí</span>
+                  <% } else { %>
+                    <span class="text-red-600 font-bold">No</span>
+                  <% } %>
+                </span>
               </div>
               <div class="mobile-card-actions">
                 <button
                   type="button"
                   class="bg-yellow-400 hover:bg-yellow-500 text-white rounded px-3 py-1"
-                  onclick="showEditarModal(<%= f.id %>, '<%= f.orden %>', <%= f.presupuesto %>)"
+                  onclick="showEditarModal(
+                    <%= f.id %>, 
+                    '<%= f.num_economico %>', 
+                    '<%= f.fecha.toISOString().split('T')[0] %>', 
+                    '<%= f.concepto.replace(/'/g, "\\'") %>', 
+                    <%= f.valor_comercial %>, 
+                    <%= f.valor_actual %>, 
+                    <%= f.venta_compra %>, 
+                    <%= f.presupuesto_reparacion %>, 
+                    <%= f.control_gastos || 0 %>, 
+                    '<%= f.orden %>', 
+                    <%= f.presupuesto %>
+                  )"
                 >
                   ✏️ Editar
                 </button>
@@ -198,7 +298,7 @@
       id="modalCrear"
       class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center hidden"
     >
-      <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-md mx-4 relative">
+      <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-3xl mx-4 relative overflow-y-auto max-h-screen">
         <button
           id="btnHideModalCrear"
           type="button"
@@ -209,27 +309,117 @@
         <h2 class="text-xl font-bold text-blue-700 mb-4">
           ➕ Nueva factibilidad
         </h2>
-        <form method="POST" action="/admin/factibilidad" class="space-y-4">
-          <input
-            name="orden"
-            placeholder="Orden"
-            required
-            class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
-          />
-          <input
-            name="presupuesto"
-            type="number"
-            step="0.01"
-            placeholder="Presupuesto"
-            required
-            class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
-          />
-          <button
-            type="submit"
-            class="bg-green-500 hover:bg-green-600 text-white py-2 px-6 rounded-lg font-bold shadow transition"
-          >
-            Guardar
-          </button>
+        <form method="POST" action="/admin/factibilidad" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Número Económico</label>
+            <input
+              name="num_economico"
+              placeholder="Número Económico"
+              required
+              class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
+            <input
+              name="fecha"
+              type="date"
+              required
+              class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+            />
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Concepto</label>
+            <textarea
+              name="concepto"
+              placeholder="Concepto"
+              required
+              rows="3"
+              class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+            ></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Valor Comercial</label>
+            <input
+              name="valor_comercial"
+              type="number"
+              step="0.01"
+              placeholder="Valor Comercial"
+              required
+              class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Valor Actual</label>
+            <input
+              name="valor_actual"
+              type="number"
+              step="0.01"
+              placeholder="Valor Actual"
+              required
+              class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Venta/Compra</label>
+            <select
+              name="venta_compra"
+              required
+              class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+            >
+              <option value="true">Venta</option>
+              <option value="false">Compra</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Presupuesto Reparación</label>
+            <input
+              name="presupuesto_reparacion"
+              type="number"
+              step="0.01"
+              placeholder="Presupuesto Reparación"
+              required
+              class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Control de Gastos</label>
+            <input
+              name="control_gastos"
+              type="number"
+              step="0.01"
+              placeholder="Control de Gastos"
+              class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Orden</label>
+            <input
+              name="orden"
+              placeholder="Orden"
+              required
+              class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Presupuesto</label>
+            <input
+              name="presupuesto"
+              type="number"
+              step="0.01"
+              placeholder="Presupuesto"
+              required
+              class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+            />
+          </div>
+          <div class="md:col-span-2 flex justify-end">
+            <button
+              type="submit"
+              class="bg-green-500 hover:bg-green-600 text-white py-2 px-6 rounded-lg font-bold shadow transition"
+            >
+              Guardar
+            </button>
+          </div>
         </form>
       </div>
     </div>
@@ -239,7 +429,7 @@
       id="modalEditar"
       class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center hidden"
     >
-      <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-md mx-4 relative">
+      <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-3xl mx-4 relative overflow-y-auto max-h-screen">
         <button
           id="btnHideModalEditar"
           type="button"
@@ -250,29 +440,127 @@
         <h2 class="text-xl font-bold text-blue-700 mb-4">
           ✏️ Editar factibilidad
         </h2>
-        <form method="POST" id="formEditar" class="space-y-4">
-          <input
-            name="orden"
-            id="editarOrden"
-            placeholder="Orden"
-            required
-            class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
-          />
-          <input
-            name="presupuesto"
-            id="editarPresupuesto"
-            type="number"
-            step="0.01"
-            placeholder="Presupuesto"
-            required
-            class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
-          />
-          <button
-            type="submit"
-            class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-6 rounded-lg font-bold shadow transition"
-          >
-            Actualizar
-          </button>
+        <form method="POST" id="formEditar" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Número Económico</label>
+            <input
+              name="num_economico"
+              id="editarNumEconomico"
+              placeholder="Número Económico"
+              required
+              class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
+            <input
+              name="fecha"
+              id="editarFecha"
+              type="date"
+              required
+              class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+            />
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Concepto</label>
+            <textarea
+              name="concepto"
+              id="editarConcepto"
+              placeholder="Concepto"
+              required
+              rows="3"
+              class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+            ></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Valor Comercial</label>
+            <input
+              name="valor_comercial"
+              id="editarValorComercial"
+              type="number"
+              step="0.01"
+              placeholder="Valor Comercial"
+              required
+              class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Valor Actual</label>
+            <input
+              name="valor_actual"
+              id="editarValorActual"
+              type="number"
+              step="0.01"
+              placeholder="Valor Actual"
+              required
+              class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Venta/Compra</label>
+            <select
+              name="venta_compra"
+              id="editarVentaCompra"
+              required
+              class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+            >
+              <option value="true">Venta</option>
+              <option value="false">Compra</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Presupuesto Reparación</label>
+            <input
+              name="presupuesto_reparacion"
+              id="editarPresupuestoReparacion"
+              type="number"
+              step="0.01"
+              placeholder="Presupuesto Reparación"
+              required
+              class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Control de Gastos</label>
+            <input
+              name="control_gastos"
+              id="editarControlGastos"
+              type="number"
+              step="0.01"
+              placeholder="Control de Gastos"
+              class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Orden</label>
+            <input
+              name="orden"
+              id="editarOrden"
+              placeholder="Orden"
+              required
+              class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Presupuesto</label>
+            <input
+              name="presupuesto"
+              id="editarPresupuesto"
+              type="number"
+              step="0.01"
+              placeholder="Presupuesto"
+              required
+              class="border border-gray-300 focus:border-blue-500 p-2 rounded-lg w-full"
+            />
+          </div>
+          <div class="md:col-span-2 flex justify-end">
+            <button
+              type="submit"
+              class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-6 rounded-lg font-bold shadow transition"
+            >
+              Actualizar
+            </button>
+          </div>
         </form>
       </div>
     </div>
@@ -290,6 +578,16 @@
       const modalEditar = document.getElementById("modalEditar");
       const btnHideModalEditar = document.getElementById("btnHideModalEditar");
       const formEditar = document.getElementById("formEditar");
+      
+      // Nuevos elementos para editar
+      const editarNumEconomico = document.getElementById("editarNumEconomico");
+      const editarFecha = document.getElementById("editarFecha");
+      const editarConcepto = document.getElementById("editarConcepto");
+      const editarValorComercial = document.getElementById("editarValorComercial");
+      const editarValorActual = document.getElementById("editarValorActual");
+      const editarVentaCompra = document.getElementById("editarVentaCompra");
+      const editarPresupuestoReparacion = document.getElementById("editarPresupuestoReparacion");
+      const editarControlGastos = document.getElementById("editarControlGastos");
       const editarOrden = document.getElementById("editarOrden");
       const editarPresupuesto = document.getElementById("editarPresupuesto");
 
@@ -298,7 +596,15 @@
         if (e.target === modalEditar) modalEditar.classList.add("hidden");
       };
 
-      function showEditarModal(id, orden, presupuesto) {
+      function showEditarModal(id, numEconomico, fecha, concepto, valorComercial, valorActual, ventaCompra, presupuestoReparacion, controlGastos, orden, presupuesto) {
+        editarNumEconomico.value = numEconomico;
+        editarFecha.value = fecha;
+        editarConcepto.value = concepto;
+        editarValorComercial.value = valorComercial;
+        editarValorActual.value = valorActual;
+        editarVentaCompra.value = ventaCompra ? "true" : "false";
+        editarPresupuestoReparacion.value = presupuestoReparacion;
+        editarControlGastos.value = controlGastos;
         editarOrden.value = orden;
         editarPresupuesto.value = presupuesto;
         formEditar.action = `/admin/factibilidad/${id}/edit`;

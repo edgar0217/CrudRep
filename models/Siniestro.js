@@ -37,7 +37,6 @@ const Siniestro = db.define(
       ),
       allowNull: false,
     },
-
     poliza: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -56,6 +55,16 @@ const Siniestro = db.define(
     },
     importe_reparacion: {
       type: DataTypes.FLOAT,
+      allowNull: false,
+    },
+    estatus: {
+      type: DataTypes.ENUM(
+        "PENDIENTE",
+        "ENTREGADO",
+        "EN REPARACION",
+        "TRAMITE"
+      ),
+      defaultValue: "PENDIENTE",
       allowNull: false,
     },
   },

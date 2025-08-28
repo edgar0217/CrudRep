@@ -4,6 +4,7 @@ import Siniestro from "../models/Siniestro.js";
 export const listarSiniestros = async (req, res) => {
   const q = req.query.q || "";
   const order = req.query.order || "";
+  const estatus = req.query.estatus || "";
   const editId = req.query.editId || null;
 
   // Construir condición de búsqueda
@@ -13,6 +14,11 @@ export const listarSiniestros = async (req, res) => {
       { economico: { [Op.iLike]: `%${q}%` } },
       { poliza: { [Op.iLike]: `%${q}%` } },
     ];
+  }
+
+  // Agregar filtro por estatus si se proporciona
+  if (estatus) {
+    where.estatus = estatus;
   }
 
   // Construir ordenamiento
@@ -43,6 +49,7 @@ export const listarSiniestros = async (req, res) => {
     siniestros,
     q,
     order,
+    estatus,
     siniestroEditar,
   });
 };
